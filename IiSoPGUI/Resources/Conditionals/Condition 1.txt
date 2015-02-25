@@ -1,0 +1,6 @@
+if:
+floor
+screen
+HandL cVel > 5
+then:
+play G2

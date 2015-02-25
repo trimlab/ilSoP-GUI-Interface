@@ -1,0 +1,7 @@
+if:
+screen
+HandR AccAvg > 1.2 
+then:
+play G3
+play A4
+play C6
