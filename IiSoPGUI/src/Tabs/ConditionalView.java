@@ -1,10 +1,10 @@
 
 package Tabs;
 
-import Resources.ConAddButton;
-import Resources.ConAddIfButton;
-import Resources.ConAddThenButton;
-import Resources.ConDeleteButton;
+import Resources.Buttons.ConAddButton;
+import Resources.Buttons.ConAddIfButton;
+import Resources.Buttons.ConAddThenButton;
+import Resources.Buttons.ConDeleteButton;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;

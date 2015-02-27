@@ -5,8 +5,8 @@
 
 package Tabs;
 
-import Resources.PatDeleteButton;
-import Resources.PatSaveButton;
+import Resources.Buttons.PatDeleteButton;
+import Resources.Buttons.PatSaveButton;
 import Resources.PatTextArea;
 import Resources.Scale;
 import Resources.Scales;

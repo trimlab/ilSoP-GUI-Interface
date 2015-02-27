@@ -5,6 +5,7 @@
 
 package Tabs;
 
+import Resources.Buttons.StartButton;
 import java.awt.Color;
 import java.awt.Graphics;
 import javax.swing.JPanel;

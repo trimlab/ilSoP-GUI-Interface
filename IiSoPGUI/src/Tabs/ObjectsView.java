@@ -2,8 +2,8 @@
 package Tabs;
 
 import Resources.Item;
-import Resources.ObjButton;
-import Resources.ObjEnabledButton;
+import Resources.Buttons.ObjButton;
+import Resources.Buttons.ObjEnabledButton;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;

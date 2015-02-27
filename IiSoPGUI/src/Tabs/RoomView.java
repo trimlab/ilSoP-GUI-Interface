@@ -5,8 +5,8 @@
 
 package Tabs;
 
-import Resources.RoomAddButton;
-import Resources.RoomDeleteButton;
+import Resources.Buttons.RoomAddButton;
+import Resources.Buttons.RoomDeleteButton;
 import Resources.StartTextArea;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;

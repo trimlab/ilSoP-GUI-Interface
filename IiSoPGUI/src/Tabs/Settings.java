@@ -5,7 +5,7 @@
 
 package Tabs;
 
-import Resources.ObjButton;
+import Resources.Buttons.ObjButton;
 import Resources.Slider;
 import java.awt.Color;
 import java.awt.Font;
