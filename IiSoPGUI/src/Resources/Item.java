@@ -11,12 +11,12 @@ import java.awt.Color;
 public class Item {
 
     private String Name;
-    private int x, y, z;
-    private int xVel, yVel, zVel;
-    private int xAcc, yAcc, zAcc;
-    private int xVelAvg, yVelAvg, zVelAvg;
-    private int xAccAvg, yAccAvg, zAccAvg;
-    private int cVel, cAcc, cVelAvg, cAccAvg;
+    private double x, y, z;
+    private double xVel, yVel, zVel;
+    private double xAcc, yAcc, zAcc;
+    private double xVelAvg, yVelAvg, zVelAvg;
+    private double xAccAvg, yAccAvg, zAccAvg;
+    private double cVel, cAcc, cVelAvg, cAccAvg;
     private Color c;
     private boolean enabled = true;
     
@@ -43,7 +43,7 @@ public class Item {
         this.Name = Name;
     }
 
-    public int getX() {
+    public double getX() {
         return x;
     }
 
@@ -51,7 +51,7 @@ public class Item {
         this.x = x;
     }
 
-    public int getY() {
+    public double getY() {
         return y;
     }
 
@@ -59,7 +59,7 @@ public class Item {
         this.y = y;
     }
 
-    public int getZ() {
+    public double getZ() {
         return z;
     }
 
@@ -67,7 +67,7 @@ public class Item {
         this.z = z;
     }
 
-    public int getxVel() {
+    public double getxVel() {
         return xVel;
     }
 
@@ -75,7 +75,7 @@ public class Item {
         this.xVel = xVel;
     }
 
-    public int getyVel() {
+    public double getyVel() {
         return yVel;
     }
 
@@ -83,7 +83,7 @@ public class Item {
         this.yVel = yVel;
     }
 
-    public int getzVel() {
+    public double getzVel() {
         return zVel;
     }
 
@@ -91,7 +91,7 @@ public class Item {
         this.zVel = zVel;
     }
 
-    public int getxAcc() {
+    public double getxAcc() {
         return xAcc;
     }
 
@@ -99,7 +99,7 @@ public class Item {
         this.xAcc = xAcc;
     }
 
-    public int getyAcc() {
+    public double getyAcc() {
         return yAcc;
     }
 
@@ -107,7 +107,7 @@ public class Item {
         this.yAcc = yAcc;
     }
 
-    public int getzAcc() {
+    public double getzAcc() {
         return zAcc;
     }
 
@@ -115,7 +115,7 @@ public class Item {
         this.zAcc = zAcc;
     }
 
-    public int getxVelAvg() {
+    public double getxVelAvg() {
         return xVelAvg;
     }
 
@@ -123,7 +123,7 @@ public class Item {
         this.xVelAvg = xVelAvg;
     }
 
-    public int getyVelAvg() {
+    public double getyVelAvg() {
         return yVelAvg;
     }
 
@@ -131,7 +131,7 @@ public class Item {
         this.yVelAvg = yVelAvg;
     }
 
-    public int getzVelAvg() {
+    public double getzVelAvg() {
         return zVelAvg;
     }
 
@@ -139,7 +139,7 @@ public class Item {
         this.zVelAvg = zVelAvg;
     }
 
-    public int getxAccAvg() {
+    public double getxAccAvg() {
         return xAccAvg;
     }
 
@@ -147,7 +147,7 @@ public class Item {
         this.xAccAvg = xAccAvg;
     }
 
-    public int getyAccAvg() {
+    public double getyAccAvg() {
         return yAccAvg;
     }
 
@@ -155,7 +155,7 @@ public class Item {
         this.yAccAvg = yAccAvg;
     }
 
-    public int getzAccAvg() {
+    public double getzAccAvg() {
         return zAccAvg;
     }
 
@@ -163,7 +163,7 @@ public class Item {
         this.zAccAvg = zAccAvg;
     }
 
-    public int getcVel() {
+    public double getcVel() {
         return cVel;
     }
 
@@ -171,7 +171,7 @@ public class Item {
         this.cVel = cVel;
     }
 
-    public int getcAcc() {
+    public double getcAcc() {
         return cAcc;
     }
 
@@ -179,7 +179,7 @@ public class Item {
         this.cAcc = cAcc;
     }
 
-    public int getcVelAvg() {
+    public double getcVelAvg() {
         return cVelAvg;
     }
 
@@ -187,7 +187,7 @@ public class Item {
         this.cVelAvg = cVelAvg;
     }
 
-    public int getcAccAvg() {
+    public double getcAccAvg() {
         return cAccAvg;
     }
 
@@ -201,6 +201,6 @@ public class Item {
 
     public void setColor(Color c) {
         if(enabled)
-        this.c = c;
+            this.c = c;
     }
 }

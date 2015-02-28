@@ -1,7 +1,11 @@
 
 package Main;
 
+import MusicThreads.MusicThread;
+import Resources.Conditional;
 import Resources.Item;
+import Resources.PatternInfo;
+import Resources.Section;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 import Tabs.*;
@@ -11,6 +15,7 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import javax.swing.JFrame;
@@ -35,6 +40,12 @@ public class MainGUI {
     private int tab = 0;
     private Tab[] tabs = new Tab[6];
     private Item[] obj;
+    private MusicThread[] threads = {new MusicThread("Melody1"),new MusicThread("Melody2"),new MusicThread("Melody3"),
+                                     new MusicThread("Bass1"),new MusicThread("Bass2"),new MusicThread("Bass3")};
+    private ArrayList<Section> sections = new ArrayList<>();
+    private ArrayList<PatternInfo> patterns = new ArrayList<>();
+    private ArrayList<Conditional> conditionals = new ArrayList<>();
+    
     
     /**
      * The default constructor. Sets up the GUI
@@ -53,13 +64,15 @@ public class MainGUI {
         mainpanel.setFocusable(true);
         mainpanel.requestFocus();
         
-        tempMake();
+        tempMake(); ///Temporary
         
         tabs[0] = new QuickStart("Quick Start",new Color(136,0,21), mainpanel); 
         tabs[1] = new ObjectsView("Objects",new Color(112,146,190), mainpanel,obj); 
         tabs[2] = new RoomView("Room View",new Color(255,127,39), mainpanel); 
-        tabs[3] = new PatternView("Pattern Builder",new Color(127,127,127), mainpanel); 
+        tabs[3] = new PatternView("Pattern Builder",new Color(127,127,127), mainpanel);
         tabs[4] = new ConditionalView("Conditions",new Color(133,146,64), mainpanel); 
+        ((ConditionalView) tabs[4]).getInfo(obj,sections, patterns,threads);
+        ((ConditionalView) tabs[4]).setupConditionals();
         tabs[5] = new Settings("Settings",new Color(163,73,164), mainpanel);
         
         frame.getContentPane().add(mainpanel);
@@ -186,6 +199,13 @@ public class MainGUI {
     
     public class RemindTask extends TimerTask{
         public void run(){  
+            
+            sections = ((RoomView) tabs[2]).getSections();
+            patterns = ((PatternView) tabs[3]).getPatterns();
+            conditionals = ((ConditionalView) tabs[4]).getConditionals();
+            ((ConditionalView) tabs[4]).getInfo(obj,sections, patterns,threads);
+            
+            
             mainpanel.repaint(); 
             timer.schedule(new RemindTask(), tickRate);
         }

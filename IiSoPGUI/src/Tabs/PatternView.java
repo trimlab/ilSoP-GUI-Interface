@@ -10,6 +10,7 @@ import Resources.Buttons.PatSaveButton;
 import Resources.PatTextArea;
 import Resources.Scale;
 import Resources.Scales;
+import Resources.PatternInfo;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -20,7 +21,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -36,7 +37,6 @@ import org.jfugue.StreamingPlayer;
  * @author Xazaviar
  */
 public class PatternView extends Tab{
-    private int numFiles = 0;
     private int selected = -1;
     private int hover = -1;
     private boolean newSelect = false;
@@ -50,6 +50,7 @@ public class PatternView extends Tab{
     private Scale scale = new Scale(Scales.C_MAJOR_PENATONIC);
     private boolean[][] synth = new boolean[20][20];
     StreamingPlayer player = new StreamingPlayer();
+    private ArrayList<PatternInfo> patterns = new ArrayList<>();
 //    Player player = new Player();
     
     //Components
@@ -85,6 +86,27 @@ public class PatternView extends Tab{
         
         timer = new Timer();
         timer.schedule(new RemindTask(), 60000/bpm);
+        
+        this.setupPatterns();
+    }
+    
+    /**
+     * Reads in the files and sets up all of the patterns
+     */
+    private void setupPatterns(){
+        File[] files = super.finder("Resources/Patterns");
+        for(int f = 0; f < files.length; f++){
+            patterns.add(new PatternInfo(files[f]));
+        }
+    }
+    
+    /**
+     * Returns the list of current patterns
+     * @return 
+     *          The List of patterns
+     */
+    public ArrayList<PatternInfo> getPatterns(){
+        return this.patterns;
     }
     
     /**
@@ -103,20 +125,19 @@ public class PatternView extends Tab{
         g.drawString("PATTERNS", 10, 55);
         g.drawLine(10,57,220,57);
         
-        File[] files = super.finder("Resources/Patterns");
-        numFiles = files.length;
+        
         g.setFont(new Font("ARIAL", Font.BOLD, 16));
-        for(int f = 0; f < files.length; f++){
+        for(int f = 0; f < patterns.size(); f++){
             if(f == selected){
                 g.setColor(new Color(112,112,255));
                 g.fillRect(2, 65+25*f, 226, 20);
-                delete.updateSelected(files[f]);
+                delete.updateSelected(patterns.get(f),patterns);
                 if(newSelect)
-                    newPatternReadin(files[f]);
+                    newPatternReadin(patterns.get(f));
             }
             if(f == hover) g.setColor(Color.red);
             else g.setColor(Color.black);
-            g.drawString(files[f].getName().substring(0, files[f].getName().length()-4), 20, 80+25*f);
+            g.drawString(patterns.get(f).getName().substring(0, patterns.get(f).getName().length()-4), 20, 80+25*f);
             g.fillOval(10, 70+25*f, 7, 7);
         }
         g.setFont(new Font("ARIAL", Font.PLAIN, 12));
@@ -153,37 +174,24 @@ public class PatternView extends Tab{
         }
         
         //Update button info
-        save.updateCurrent(synth, bpm, nLength, scale.toString(), instrument, octave);
+        save.updateCurrent(synth, bpm, nLength, scale.toString(), instrument, octave, patterns);
         try{
             bpm = Integer.parseInt(bpms.getText());
         }catch(java.lang.NumberFormatException e){bpm=120;}
     }
     
-    private void newPatternReadin(File f){
-        try{
-            Scanner s = new Scanner(f);
-            
-            bpm = s.nextInt();
-            bpms.setText(""+bpm);
-            nLength = s.nextInt();
-            nLen.setSelection();
-            instrument = s.nextInt();
-            instr.setSelectedIndex(instrument);
-            octave = s.nextInt();
-            oct.setSelection();
-            scale.changeScale(s.next());
-            sca.setSelection();
-            
-            for(int c = 0; c < synth[0].length; c++){
-                for(int r = 0; r < synth.length; r++){
-                    synth[r][c] = s.nextInt() == 1;
-                }
-            }
-            s.close();
-            
-        }catch (IOException e){
-            
-        }
+    private void newPatternReadin(PatternInfo p){   
+        bpm = p.getBpm();
+        bpms.setText(""+bpm);
+        nLength = p.getnLen();
+        nLen.setSelection();
+        instrument = p.getInstrument();
+        instr.setSelectedIndex(instrument);
+        octave = p.getOctave();
+        oct.setSelection();
+        scale.changeScale(p.getScale().toString());
+        sca.setSelection();
+        synth = p.getPattern();
     }
     
     /**
@@ -303,7 +311,7 @@ public class PatternView extends Tab{
          */
         public void mouseMoved(MouseEvent e) {
             boolean h = false;
-            for(int f = 0; f < numFiles; f++){
+            for(int f = 0; f < patterns.size(); f++){
                 if(e.getX()<230 && e.getY()<90+25*f && e.getY()>65+25*f){
                     hover = f;
                     h = true;
@@ -360,6 +368,7 @@ public class PatternView extends Tab{
     public class PatNewButton extends JButton implements ActionListener{
 
         public void actionPerformed(ActionEvent e) {
+            
             //Set up Board
             for(int c = 0; c < synth[0].length; c++){
                 for(int r = 0; r < synth.length; r++){

@@ -1,9 +1,11 @@
 
 package Resources.Buttons;
 
+import Resources.Conditional;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import javax.swing.JButton;
 
 /**
@@ -12,10 +14,12 @@ import javax.swing.JButton;
  */
 public class ConDeleteButton extends JButton implements ActionListener{
 
-    private File selected;
+    private Conditional selected;
+    private ArrayList<Conditional> ref;
     
     public void actionPerformed(ActionEvent e){ 
-        File f = selected;
+        File f = selected.getFile();
+        ref.remove(selected);
         try{
             f.delete();
         }catch(Exception ee){
@@ -23,7 +27,8 @@ public class ConDeleteButton extends JButton implements ActionListener{
         }
     }
     
-    public void updateSelected(File s){
+    public void updateSelected(Conditional s, ArrayList<Conditional> ref){
         this.selected = s;
+        this.ref = ref;
     }
 }

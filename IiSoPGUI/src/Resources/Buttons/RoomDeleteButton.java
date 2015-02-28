@@ -1,9 +1,11 @@
 
 package Resources.Buttons;
 
+import Resources.Section;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ArrayList;
 import javax.swing.JButton;
 
 /**
@@ -12,17 +14,20 @@ import javax.swing.JButton;
  */
 public class RoomDeleteButton extends JButton implements ActionListener{
     
-    private File selected;
+    private Section selected;
+    private ArrayList<Section> ref;
     
     public void actionPerformed(ActionEvent e){
         
-        File f = selected;        
+        File f = selected.getFile(); 
+        ref.remove(selected);
         try{
             f.delete();
         }catch(Exception ee){}
     }
     
-    public void updateSelected(File s){
+    public void updateSelected(Section s, ArrayList<Section> ref){
         this.selected = s;
+        this.ref = ref;
     }
 }
