@@ -258,7 +258,7 @@ public class RoomView extends Tab{
     }
     
     private Point point(double x, double y, double z){
-        return new Point((int)(x*(716/6)+438+(y-1)*-(125/6)), 
+        return new Point((int)(-1*x*(716/6)+438+(y-1)*-(125/6)), 
                       (int)((z+2)*(-350/7)+super.getHeight()+520+(y-1)*-(290/6)));
     }
     

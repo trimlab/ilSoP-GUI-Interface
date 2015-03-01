@@ -27,7 +27,7 @@ public class Item {
     private boolean enabled = true;
     
     //Buffer variables for getting averages
-    private final int bufferSize = 100;
+    private final int bufferSize = 250;
     private int bufferIndex = 0;
     
     private final Color[] colorWheel ={new Color(237,28,36), new Color(255,128,0),new Color(240,240,0),
@@ -250,10 +250,10 @@ public class Item {
         //Cumulative stats
         this.cVel = (this.xVel+this.yVel+this.zVel)/3.0;
         this.cVelBuff[bufferIndex] = cVel;
-        this.cVelAvg = this.cVelAvg - this.zVelBuff[previousIndex]/bufferSize + this.cVelBuff[bufferIndex]/bufferSize;
+        this.cVelAvg = this.cVelAvg - this.cVelBuff[previousIndex]/bufferSize + this.cVelBuff[bufferIndex]/bufferSize;
         this.cAcc = (this.xAcc+this.yAcc+this.zAcc)/3.0;
         this.cAccBuff[bufferIndex] = cAcc;
-        this.cAccAvg = this.cAccAvg - this.zAccBuff[previousIndex]/bufferSize + this.cAccBuff[bufferIndex]/bufferSize;
+        this.cAccAvg = this.cAccAvg - this.cAccBuff[previousIndex]/bufferSize + this.cAccBuff[bufferIndex]/bufferSize;
         
         //Increment buffer index
         bufferIndex++;

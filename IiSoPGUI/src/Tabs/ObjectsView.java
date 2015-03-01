@@ -54,8 +54,6 @@ public class ObjectsView extends Tab{
      * The draw method that creates the tab
      * @param g
      *          The graphics
-     * @param p 
-     *          The panel to draw on
      */
     public void draw(Graphics g){
         boxWid = (super.getPanel().getWidth()-100)/objects.length;
@@ -102,10 +100,37 @@ public class ObjectsView extends Tab{
         }
     }
     
+    public void update(Item[] t){
+        int len = objects.length;
+        this.objects = t;
+        
+            //Check if remake needed
+            if(len != objects.length){
+                buttons = new ObjButton[objects.length];
+                butts = new ObjEnabledButton[objects.length];
+
+                for(int b = 0; b < buttons.length; b++){
+                buttons[b] = new ObjButton();
+                buttons[b].setText("COLOR");
+                buttons[b].setObj(objects[b]);
+                buttons[b].setBounds(b*(super.getPanel().getWidth()-100)/objects.length+80, super.getPanel().getHeight()-100, 100, 30);
+                buttons[b].addActionListener(buttons[b]);
+                buttons[b].setFocusable(false);
+                super.getPanel().add(buttons[b]);
+
+                butts[b] = new ObjEnabledButton();
+                butts[b].setText("DISABLE");
+                butts[b].setObj(objects[b]);
+                butts[b].setBounds(b*(super.getPanel().getWidth()-100)/objects.length+(super.getPanel().getWidth()-100)/objects.length-80, super.getPanel().getHeight()-100, 100, 30);
+                butts[b].addActionListener(butts[b]);
+                butts[b].setFocusable(false);
+                super.getPanel().add(butts[b]);
+            }
+        }
+    }
+    
     /**
      * Sets up the new components for the new tab
-     * @param p 
-     *          The panel to set the components on
      */
     public void setupComponents(){
         //Setup Buttons

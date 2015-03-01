@@ -108,7 +108,7 @@ public class MainGUI {
         String[] names = {"FootL","HandL","FootR","HandR"};
         for(int i = 0; i < obj.length; i++){
             obj[i] = new Item(names[i]);    
-            obj[i].updateValues(0, 0, 0, 1.0*tickRate/1000);
+            obj[i].updateValues(0, 0, 0, 1.0*10/1000);
         }
     }
     
@@ -131,10 +131,15 @@ public class MainGUI {
             super.paintComponent(g);
             setBackground(new Color(0,0,0));
             
-            if(dataIn.connected)
+            if(dataIn.connected){
                 g.setColor(new Color(255,255,255));
-            else
+                g.setFont(new Font("ARIAL", Font.BOLD, 20));
+                g.drawString(dataIn.ipAddress.substring(1), mainpanel.getWidth()-180, tabs[0].getHeight()-3);
+            }else{
                 g.setColor(new Color(255,0,0));
+                g.setFont(new Font("ARIAL", Font.BOLD, 20));
+                g.drawString("NO CONNECTION", mainpanel.getWidth()-200, tabs[0].getHeight()-3);
+            }
             
             g.fillRect(mainpanel.getWidth()-25, 24, 4, 4);
             g.fillRect(mainpanel.getWidth()-20, 20, 4, 8);
@@ -214,11 +219,7 @@ public class MainGUI {
             patterns = ((PatternView) tabs[3]).getPatterns();
             conditionals = ((ConditionalView) tabs[4]).getConditionals();
             ((ConditionalView) tabs[4]).getInfo(obj,sections, patterns,threads);
-            
-            //Update coordinates
-            for(int i = 0; i < obj.length; i++){   
-                obj[i].updateValues(0, 0, 0, 1.0*tickRate/1000);
-            }
+            ((ObjectsView) tabs[1]).update(obj);
             
             runConditionals();
             
@@ -252,7 +253,7 @@ public class MainGUI {
 
         private final int serverPort = 9875;
         private DatagramSocket serverSocket;
-//        private String ipAddress = "";
+        public String ipAddress = "";
         
         public boolean connected = false;
         
@@ -280,8 +281,10 @@ public class MainGUI {
                         connected = false;
                     }
                 }
+                
+                ipAddress = receivePacket.getAddress().toString();
                 this.decodeAndUpdate(new String(receivePacket.getData()));
-                sleep(25);
+                sleep(10);
             }
         }
         
@@ -313,7 +316,7 @@ public class MainGUI {
                 obj = new Item[count];
                 for(int i = 0; i < count; i++){
                     obj[i] = new Item(s.next());
-                    obj[i].updateValues(0, 0, 0, 1.0*tickRate/1000);
+                    obj[i].updateValues(0, 0, 0, 1.0*10/1000);
                 }
             }
             
@@ -323,7 +326,7 @@ public class MainGUI {
             //Update coordinates
             for(int i = 0; i < obj.length; i++){
                 if(obj[i].isEnabled())
-                    obj[i].updateValues(s.nextDouble(), s.nextDouble(), s.nextDouble(), 1.0*tickRate/1000);
+                    obj[i].updateValues(s.nextDouble(), s.nextDouble(), s.nextDouble(), 1.0*10/1000);
             }
             s.close();
         }

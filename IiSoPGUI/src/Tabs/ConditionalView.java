@@ -7,8 +7,6 @@ import Resources.Buttons.ConAddIfButton;
 import Resources.Buttons.ConAddThenButton;
 import Resources.Buttons.ConDeleteButton;
 import Resources.Conditional;
-import Resources.Condition;
-import Resources.Action;
 import Resources.Buttons.ConDeleteIfButton;
 import Resources.Buttons.ConDeleteThenButton;
 import Resources.Buttons.ConUseButton;
@@ -167,6 +165,12 @@ public class ConditionalView extends Tab{
         g.setFont(new Font("ARIAL", Font.PLAIN, 12));
         
         addC.updateConList(conditionals,objects,sections,patterns,threads);
+        for(int u = 0; u < conditionals.size(); u++){
+            for(int c= 0; c < conditionals.get(u).getConditions().size(); c++)
+                conditionals.get(u).getConditions().get(c).updateCondition(objects, sections);
+            for(int a = 0; a < conditionals.get(u).getActions().size(); a++)
+                conditionals.get(u).getActions().get(a).updateAction(patterns, threads);
+        }
         
     }
     

@@ -1,4 +1,5 @@
 if:
 FootL x = 0.0
+HandL IN Right Side
 then:
-PLAY PATTERN Smiley Face 2 IN Melody3
+PLAY G3 IN Melody1
