@@ -1,4 +1,4 @@
 if:
 FootL x = 0.0
 then:
-PLAY PATTERN My Super Cool Skills IN Bass1
+PLAY PATTERN Smiley Face 2 IN Melody3

@@ -15,9 +15,16 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.SocketException;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 /**
@@ -44,6 +51,7 @@ public class MainGUI {
     private ArrayList<Section> sections = new ArrayList<>();
     private ArrayList<PatternInfo> patterns = new ArrayList<>();
     private ArrayList<Conditional> conditionals = new ArrayList<>();
+    private ReceiveThread dataIn;
     
     
     /**
@@ -65,6 +73,9 @@ public class MainGUI {
         
         tempMake(); ///Temporary
         
+        //Set up server Connection
+        dataIn = new ReceiveThread();
+        new Thread(dataIn).start();
         
         String[] names = {"Melody1","Melody2","Melody3","Bass1","Bass2","Bass3"};
         threads = new MusicThread[names.length];
@@ -92,34 +103,13 @@ public class MainGUI {
     }  
     
     private void tempMake(){
-        obj = new Item[4];
+        obj = new Item[1];
 //        System.out.println(obj.length);
-        for(int i = 0; i < 4; i++){
-            obj[i] = new Item();
-            obj[i].setX(0);
-            obj[i].setY(0);
-            obj[i].setZ(0);
-            obj[i].setxAcc(0);
-            obj[i].setyAcc(0);
-            obj[i].setzAcc(0);
-            obj[i].setcAcc(0);
-            obj[i].setxVel(0);
-            obj[i].setyVel(0);
-            obj[i].setzVel(0);
-            obj[i].setcVel(0);
-            obj[i].setxAccAvg(0);
-            obj[i].setyAccAvg(0);
-            obj[i].setzAccAvg(0);
-            obj[i].setcAccAvg(0);
-            obj[i].setxVelAvg(0);
-            obj[i].setyVelAvg(0);
-            obj[i].setzVelAvg(0);
-            obj[i].setcVelAvg(0);            
+        String[] names = {"FootL","HandL","FootR","HandR"};
+        for(int i = 0; i < obj.length; i++){
+            obj[i] = new Item(names[i]);    
+            obj[i].updateValues(0, 0, 0, 1.0*tickRate/1000);
         }
-        obj[0].setName("FootL");
-        obj[1].setName("HandL");
-        obj[2].setName("FootR");
-        obj[3].setName("HandR");
     }
     
 //*********************************************************   
@@ -140,6 +130,17 @@ public class MainGUI {
         public void paintComponent(Graphics g){
             super.paintComponent(g);
             setBackground(new Color(0,0,0));
+            
+            if(dataIn.connected)
+                g.setColor(new Color(255,255,255));
+            else
+                g.setColor(new Color(255,0,0));
+            
+            g.fillRect(mainpanel.getWidth()-25, 24, 4, 4);
+            g.fillRect(mainpanel.getWidth()-20, 20, 4, 8);
+            g.fillRect(mainpanel.getWidth()-15, 16, 4, 12);
+            g.fillRect(mainpanel.getWidth()-10, 12, 4, 16);
+            g.fillRect(mainpanel.getWidth()-05, 8, 4, 20);
             
             drawTabs(g);
         }
@@ -214,6 +215,11 @@ public class MainGUI {
             conditionals = ((ConditionalView) tabs[4]).getConditionals();
             ((ConditionalView) tabs[4]).getInfo(obj,sections, patterns,threads);
             
+            //Update coordinates
+            for(int i = 0; i < obj.length; i++){   
+                obj[i].updateValues(0, 0, 0, 1.0*tickRate/1000);
+            }
+            
             runConditionals();
             
             mainpanel.repaint(); 
@@ -241,4 +247,95 @@ public class MainGUI {
             
         }
      }
+    
+    public class ReceiveThread implements Runnable{
+
+        private final int serverPort = 9875;
+        private DatagramSocket serverSocket;
+//        private String ipAddress = "";
+        
+        public boolean connected = false;
+        
+        public void run() {
+            while(true){
+                try {
+                    serverSocket = new DatagramSocket(serverPort);
+                    connected = true;
+                    break;
+                } catch (SocketException ex) {
+
+                }
+            }
+            
+            while(true){
+                byte[] receiveData = new byte[1024];
+                DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+                try{
+                    connected = false;
+                    serverSocket.receive(receivePacket);
+                    connected = true;
+                }catch (IOException e) {
+                    serverSocket.close();
+                    while(!reconnect()){
+                        connected = false;
+                    }
+                }
+                this.decodeAndUpdate(new String(receivePacket.getData()));
+                sleep(25);
+            }
+        }
+        
+        /**
+        * Tells the thread to sleep for a set amount of time
+        * @param dur 
+        *          The duration the thread sleeps
+        */
+       public void sleep(int dur){
+           try{
+           Thread.sleep(dur);
+           }catch(InterruptedException e){
+               System.out.println("Room has been interrupted");
+           }
+       }
+        
+        public void decodeAndUpdate(String input){
+            String in = input.replaceAll("[~%-.0-9]", "");
+            Scanner s = new Scanner(in);
+            int count=-1;
+            while(s.hasNext()){
+                s.next();
+                count++;
+            }
+            
+            //Update the objects based on the data received
+            if(count>obj.length){
+                s = new Scanner(in);
+                obj = new Item[count];
+                for(int i = 0; i < count; i++){
+                    obj[i] = new Item(s.next());
+                    obj[i].updateValues(0, 0, 0, 1.0*tickRate/1000);
+                }
+            }
+            
+            in = input.replaceAll("[~%A-Za-z]", " "); 
+            s = new Scanner(in);
+            
+            //Update coordinates
+            for(int i = 0; i < obj.length; i++){
+                if(obj[i].isEnabled())
+                    obj[i].updateValues(s.nextDouble(), s.nextDouble(), s.nextDouble(), 1.0*tickRate/1000);
+            }
+            s.close();
+        }
+        
+        public boolean reconnect(){
+            try {
+                serverSocket = new DatagramSocket(serverPort);
+                connected = true;
+                return true;
+            } catch (SocketException ex) {}
+            return false;
+        }
+        
+    }
 }
