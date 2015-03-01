@@ -1,7 +1,7 @@
 if:
-screen
+HandR IN Section 1
 HandR AccAvg > 1.2 
+FootR xVel < 0.0
 then:
-play G3
-play A4
-play C6
+PLAY G3 in Bass1
+PLAY PATTERN Pattern A IN Melody2

@@ -7,6 +7,7 @@ package Tabs;
 
 import Resources.Buttons.RoomAddButton;
 import Resources.Buttons.RoomDeleteButton;
+import Resources.Section;
 import Resources.StartTextArea;
 import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
@@ -21,8 +22,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionListener;
 import java.io.File;
-import java.io.IOException;
-import java.util.Scanner;
+import java.util.ArrayList;
 import javax.swing.JPanel;
 
 /**
@@ -34,9 +34,9 @@ public class RoomView extends Tab{
     private StartTextArea x1, x2, y1, y2, z1, z2, name;
     private RoomAddButton add;
     private RoomDeleteButton delete;
-    private int numFiles = 0;
     private int selected = -1;
     private int hover = -1;
+    private ArrayList<Section> sections = new ArrayList<>();
     
     /**
      * The default constructor (not in use)
@@ -54,14 +54,33 @@ public class RoomView extends Tab{
         super.setName(n);
         super.setColor(c);
         super.setPanel(p);
+        
+        this.setupSections();
+    }
+    
+    /**
+     * Sets up the sections array
+     */
+    private void setupSections(){
+        File[] files = super.finder("Resources/Sections");
+        for(int t = 0; t < files.length; t++){
+            sections.add(new Section(files[t]));
+        }
+    }
+    
+    /**
+     * Returns the sections
+     * @return 
+     *          The sections available
+     */
+    public ArrayList<Section> getSections(){
+        return this.sections;
     }
     
     /**
      * The draw method that creates the tab
      * @param g
      *          The graphics
-     * @param p 
-     *          The panel to draw on
      */
     public void draw(Graphics g){
         Graphics2D g2d = (Graphics2D) g;
@@ -105,19 +124,17 @@ public class RoomView extends Tab{
         g.setColor(Color.blue);
         g.drawLine(438, 550, 438, 200);
         
-        
-        File[] files = super.finder("Resources/Sections");
-        numFiles = files.length;
         g.setFont(new Font("ARIAL", Font.BOLD, 16));
-        for(int f = 0; f < files.length; f++){
+        for(int f = 0; f < sections.size(); f++){
             if(f == selected){
                 g.setColor(new Color(112,112,255));
                 g.fillRect(super.getPanel().getWidth()-278, 165+25*f, 276, 20);
-                drawSection(g2d,files[f]);
+                drawSection(g2d,sections.get(f));
+                delete.updateSelected(sections.get(selected),sections);
             }
             if(f == hover) g.setColor(Color.red);
             else g.setColor(Color.black);
-            g.drawString(files[f].getName().substring(0, files[f].getName().length()-4), super.getPanel().getWidth()-260, 180+25*f);
+            g.drawString(sections.get(f).getName(), super.getPanel().getWidth()-260, 180+25*f);
             g.fillOval(super.getPanel().getWidth()-270, 170+25*f, 7, 7);
         }
         g.setFont(new Font("ARIAL", Font.PLAIN, 12));
@@ -166,9 +183,7 @@ public class RoomView extends Tab{
         add.updateData(name.getText(), Double.parseDouble(test[0]), 
                        Double.parseDouble(test[1]), Double.parseDouble(test[2]), 
                        Double.parseDouble(test[3]), Double.parseDouble(test[4]), 
-                       Double.parseDouble(test[5]));
-        if(selected != -1)
-        delete.updateSelected(files[selected]);
+                       Double.parseDouble(test[5]), sections);
 
     }
     
@@ -177,19 +192,9 @@ public class RoomView extends Tab{
      * @param g 
      *          The graphics
      */
-    private void drawSection(Graphics2D g, File f){
+    private void drawSection(Graphics2D g, Section s){
         Polygon fill = new Polygon();
-        double x1=0,y1=0,z1=0,x2=0,y2=0,z2=0;
-        try{
-        Scanner s = new Scanner(f);
-        x1 = s.nextDouble();
-        y1 = s.nextDouble();
-        z1 = s.nextDouble();
-        x2 = s.nextDouble();
-        y2 = s.nextDouble();
-        z2 = s.nextDouble();
-        s.close();
-        }catch(IOException e){}
+        double x1=s.x1,y1=s.y1,z1=s.z1,x2=s.x2,y2=s.y2,z2=s.z2;
         
         //Build the polygon
         fill.addPoint(point(x1,y1,z1).x,point(x1,y1,z1).y); //1
@@ -253,7 +258,7 @@ public class RoomView extends Tab{
     }
     
     private Point point(double x, double y, double z){
-        return new Point((int)(x*(716/6)+438+(y-1)*-(125/6)), 
+        return new Point((int)(-1*x*(716/6)+438+(y-1)*-(125/6)), 
                       (int)((z+2)*(-350/7)+super.getHeight()+520+(y-1)*-(290/6)));
     }
     
@@ -367,7 +372,7 @@ public class RoomView extends Tab{
          */
         public void mouseMoved(MouseEvent e) {
             boolean h = false;
-            for(int f = 0; f < numFiles; f++){
+            for(int f = 0; f < sections.size(); f++){
                 if(e.getX()>1000 && e.getY()<190+25*f && e.getY()>165+25*f){
                     hover = f;
                     h = true;

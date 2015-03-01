@@ -1,6 +1,6 @@
 if:
-floor
-screen
-HandL cVel > 5
+FootL IN Floor
+FootR IN Screen
+HandL cVel >= 2.3
 then:
-play G2
+PLAY PATTERN Pattern A IN Melody1

@@ -1,19 +1,78 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package Resources;
 
+import MusicThreads.MusicThread;
+import java.util.ArrayList;
+import java.util.Scanner;
+import org.jfugue.Pattern;
+
 /**
  *
- * @author Xazaviar
+ * @author Joseph Ryan
  */
 public class Action {
     
+    private String actionText;
+    private PatternInfo pattern;
+    private String note, threadName;
+    private MusicThread thread;
+    private boolean patternAction = false;
+    
+    public Action(String action, ArrayList<PatternInfo> patterns, MusicThread[] threads){
+        this.actionText = action;
+        
+        this.updateAction(patterns, threads);
+    }
+    
+    public String toString(){
+        return this.actionText;
+    }
+    
     /**
-     * Default Constructor (Not in use)
+     * This checks to see if the thread being referenced 
+     * is now a currently run thread and if the pattern 
+     * being referenced is an available pattern
+     * @param patterns
+     *          The list of patterns
+     * @param threads 
+     *          The list of Music threads
      */
-    public Action(){}
+    public void updateAction(ArrayList<PatternInfo> patterns, MusicThread[] threads){
+        Scanner s = new Scanner(actionText);
+        String scan = s.next(); //PLAYS
+        scan = s.next();
+        if(scan.equals("PATTERN")){
+            patternAction = true;
+            scan = "";
+            while(!scan.endsWith("IN "))
+                scan += s.next() + " ";
+            scan = scan.substring(0, scan.length()-4);
+            for(int i = 0; i < patterns.size(); i++){
+                if(patterns.get(i).getName().equals(scan)){
+                    pattern = patterns.get(i);
+                    break;
+                }
+            }
+        }else{
+            note = scan;
+            scan = s.next(); // IN
+        }
+        threadName = s.next();
+        for(int c = 0; c < threads.length; c++){
+            if(threads[c].getName().equals(threadName)){
+                thread = threads[c];
+                break;
+            }
+        }
+    }
+    
+    public void performAction(){
+        if(this.thread != null && (note != null || pattern != null)){
+            if(!this.patternAction)
+                this.thread.receivePattern(new Pattern(note));
+            else{
+                this.thread.receivePattern(new Pattern(pattern.toString()));
+            }
+        }
+    }
 }
