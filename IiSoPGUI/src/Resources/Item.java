@@ -17,12 +17,16 @@ public class Item {
     private double xVelAvg, yVelAvg, zVelAvg;
     private double xAccAvg, yAccAvg, zAccAvg;
     private double cVel, cAcc, cVelAvg, cAccAvg;
-    private Color c;
+    private int color = 0;
     private boolean enabled = true;
     
-    private final Color[] colorWheel ={Color.RED, Color.BLUE, Color.CYAN, 
-                                 Color.GREEN, Color.MAGENTA, Color.ORANGE, 
-                                 Color.PINK, Color.YELLOW, Color.WHITE};
+    private final Color[] colorWheel ={new Color(237,28,36), new Color(255,128,0),new Color(240,240,0),
+                                       new Color(0,255,0), new Color(0,255,255),new Color(0,0,255),
+                                       new Color(128,0,255), new Color(255,0,255)};
+    
+    private final Color[] colorWheelDim ={new Color(95,7,12), new Color(136,68,0),new Color(155,155,0),
+                                          new Color(0,100,0), new Color(0,138,138),new Color(0,0,138),
+                                          new Color(69,0,138), new Color(128,0,128)};
 
     public boolean isEnabled() {
         return enabled;
@@ -196,11 +200,23 @@ public class Item {
     }
     
     public Color getColor() {
-        return c;
+        if(enabled){
+            return this.colorWheel[color];
+        }else{
+            return Color.DARK_GRAY;
+        }
+    }
+    
+    public Color getColorDimmed() {
+        if(enabled){
+            return this.colorWheelDim[color];
+        }else{
+            return Color.DARK_GRAY;
+        }
     }
 
-    public void setColor(Color c) {
+    public void setColor(int i) {
         if(enabled)
-            this.c = c;
+            this.color = i;
     }
 }

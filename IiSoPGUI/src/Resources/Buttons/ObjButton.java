@@ -8,16 +8,20 @@ import javax.swing.JButton;
 
 /**
  *
- * @author Xazaviar
+ * @author Joseph Ryan
  */
 public class ObjButton extends JButton implements ActionListener{
     private Item obj;
+    private int c=0;
 
     public void setObj(Item obj) {
         this.obj = obj;
     }
     
     public void actionPerformed(ActionEvent e){
-        obj.setColor(obj.getColorWheel()[(int)(Math.random()*100)%obj.getColorWheel().length]);
+        c++;
+        if(c >= obj.getColorWheel().length)
+            c = 0;
+        obj.setColor(c);
     }
 }

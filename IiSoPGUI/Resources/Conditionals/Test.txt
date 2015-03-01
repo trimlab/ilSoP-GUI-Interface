@@ -1,0 +1,4 @@
+if:
+FootL x = 0.0
+then:
+PLAY PATTERN My Super Cool Skills IN Bass1

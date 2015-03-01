@@ -9,6 +9,8 @@ import Resources.Buttons.ConDeleteButton;
 import Resources.Conditional;
 import Resources.Condition;
 import Resources.Action;
+import Resources.Buttons.ConDeleteIfButton;
+import Resources.Buttons.ConDeleteThenButton;
 import Resources.Buttons.ConUseButton;
 import Resources.Item;
 import Resources.PatternInfo;
@@ -43,7 +45,9 @@ public class ConditionalView extends Tab{
     private ConAddButton addC;
     private ConAddIfButton addF;
     private ConAddThenButton addT;
-    private ConDeleteButton delC, delF, delT;
+    private ConDeleteButton delC; 
+    private ConDeleteIfButton delF;
+    private ConDeleteThenButton delT;
     private ConUseButton useC;
     
     //Info
@@ -146,11 +150,13 @@ public class ConditionalView extends Tab{
         for(int f = 0; f < conditionals.size(); f++){
             if(f == selectedC){
                 g.setColor(new Color(112,112,255));
-                g.fillRect(30, 100+25*f, 276, 25);
+                g.fillRect(30, 100+25*f, 390, 25);
                 if(newSelect)
                     drawConditionals(g,conditionals.get(f));
                 delC.updateSelected(conditionals.get(f),conditionals);
                 useC.updateSelected(conditionals.get(f));
+                addF.updateCon(objects, conditionals.get(f), sections);
+                addT.updateCon(threads, conditionals.get(f), patterns);
             }
             if(f == hoverC) g.setColor(Color.red);
             else if(conditionals.get(f).isEnabled()) g.setColor(Color.black);
@@ -168,29 +174,43 @@ public class ConditionalView extends Tab{
 
         //Draw Conditions
         g.setFont(new Font("ARIAL", Font.BOLD, 20));
-        for(int c = 0; c < conditionals.get(selectedC).getConditions().size(); c++){
+        for(int c = 0; c < con.getConditions().size(); c++){
             if(c == selectedF){
                 g.setColor(new Color(112,112,255));
-                g.fillRect(30+(super.getPanel().getWidth()-50)/3, 100+25*c, 276, 25);
+                g.fillRect(30+(super.getPanel().getWidth()-50)/3, 100+25*c, 390, 25);
+                delF.update(con, con.getConditions().get(c).toString());
             }
             if(c == hoverF) g.setColor(Color.red);
-            else if(con.isEnabled()) g.setColor(Color.black);
-            else g.setColor(Color.gray);
-            g.drawString(conditionals.get(selectedC).getConditions().get(c).toString(), 50+(super.getPanel().getWidth()-50)/3, 120+25*c);
+            else if(con.isEnabled()){
+                Item temp = con.getConditions().get(c).getObject();
+                if(temp!=null)
+                    g.setColor(temp.getColor());
+                else
+                    g.setColor(Color.DARK_GRAY);
+            }
+            else{ 
+                Item temp = con.getConditions().get(c).getObject();
+                if(temp!=null)
+                    g.setColor(temp.getColorDimmed());
+                else
+                    g.setColor(Color.DARK_GRAY);
+            }
+            g.drawString(con.getConditions().get(c).toString(), 50+(super.getPanel().getWidth()-50)/3, 120+25*c);
             g.fillOval(40+(super.getPanel().getWidth()-50)/3, 110+25*c, 7, 7);
         }
         
         //Draw Actions
         g.setFont(new Font("ARIAL", Font.BOLD, 20));
-        for(int c = 0; c < conditionals.get(selectedC).getActions().size(); c++){
+        for(int c = 0; c < con.getActions().size(); c++){
             if(c == selectedT){
                 g.setColor(new Color(112,112,255));
-                g.fillRect(30+2*(super.getPanel().getWidth()-50)/3, 100+25*c, 276, 25);
+                g.fillRect(30+2*(super.getPanel().getWidth()-50)/3, 100+25*c, 390, 25);
+                delT.update(con, con.getActions().get(c).toString());
             }
             if(c == hoverT) g.setColor(Color.red);
             else if(con.isEnabled()) g.setColor(Color.black);
             else g.setColor(Color.gray);
-            g.drawString(conditionals.get(selectedC).getActions().get(c).toString(), 50+2*(super.getPanel().getWidth()-50)/3, 120+25*c);
+            g.drawString(con.getActions().get(c).toString(), 50+2*(super.getPanel().getWidth()-50)/3, 120+25*c);
             g.fillOval(40+2*(super.getPanel().getWidth()-50)/3, 110+25*c, 7, 7);
         }
         
@@ -229,7 +249,7 @@ public class ConditionalView extends Tab{
         addF.setFocusable(false);
         super.getPanel().add(addF);
         
-        delF = new ConDeleteButton();
+        delF = new ConDeleteIfButton();
         delF.setText("DELETE");
         delF.setBounds(2*(super.getPanel().getWidth()-50)/3-100, super.getPanel().getHeight()-45-super.getHeight(), 100, 30);
         delF.addActionListener(delF);
@@ -243,7 +263,7 @@ public class ConditionalView extends Tab{
         addT.setFocusable(false);
         super.getPanel().add(addT);
         
-        delT = new ConDeleteButton();
+        delT = new ConDeleteThenButton();
         delT.setText("DELETE");
         delT.setBounds(3*(super.getPanel().getWidth()-50)/3-100, super.getPanel().getHeight()-45-super.getHeight(), 100, 30);
         delT.addActionListener(delT);

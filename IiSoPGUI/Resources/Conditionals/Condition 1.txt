@@ -1,6 +1,6 @@
 if:
-FootL IN floor
-FootR IN screen
+FootL IN Floor
+FootR IN Screen
 HandL cVel >= 2.3
 then:
 PLAY PATTERN Pattern A IN Melody1

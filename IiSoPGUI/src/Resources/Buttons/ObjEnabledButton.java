@@ -2,7 +2,6 @@
 package Resources.Buttons;
 
 import Resources.Item;
-import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JButton;
@@ -20,12 +19,10 @@ public class ObjEnabledButton extends JButton implements ActionListener{
     
     public void actionPerformed(ActionEvent e){
         if(obj.isEnabled()){
-            obj.setColor(Color.DARK_GRAY);
             obj.setEnabled(false);
             this.setText("ENABLE");
         }else{
             obj.setEnabled(true);
-            obj.setColor(obj.getColorWheel()[(int)(Math.random()*100)%obj.getColorWheel().length]);
             this.setText("DISABLE");
         }
     }

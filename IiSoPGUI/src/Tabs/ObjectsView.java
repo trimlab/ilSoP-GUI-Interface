@@ -44,7 +44,7 @@ public class ObjectsView extends Tab{
         butts = new ObjEnabledButton[o.length];
         
         for(int cl = 0; cl < objects.length; cl++){
-            objects[cl].setColor(objects[cl].getColorWheel()[(int)((Math.random()*100)%objects[cl].getColorWheel().length)]);
+            objects[cl].setColor(0);
         }
         
         

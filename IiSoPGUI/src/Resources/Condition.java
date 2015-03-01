@@ -156,4 +156,8 @@ public class Condition {
         
         return false;
     }
+    
+    public Item getObject(){
+        return this.object;
+    }
 }

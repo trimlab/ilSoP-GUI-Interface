@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package Tabs;
 
 import Resources.Buttons.PatDeleteButton;
@@ -137,7 +132,7 @@ public class PatternView extends Tab{
             }
             if(f == hover) g.setColor(Color.red);
             else g.setColor(Color.black);
-            g.drawString(patterns.get(f).getName().substring(0, patterns.get(f).getName().length()-4), 20, 80+25*f);
+            g.drawString(patterns.get(f).getName(), 20, 80+25*f);
             g.fillOval(10, 70+25*f, 7, 7);
         }
         g.setFont(new Font("ARIAL", Font.PLAIN, 12));
@@ -333,7 +328,7 @@ public class PatternView extends Tab{
             if(beat == synth.length) beat = 0;
             
             //Play the notes
-            String note = "T"+bpm+" I"+instrument+" ";
+            String note = "T"+bpm+" I"+instrument+"  ";
             String nlen = "";
             
             if(nLength == 1) nlen = "t";
@@ -349,7 +344,7 @@ public class PatternView extends Tab{
                 }
             }
             
-            note = note.substring(0, note.length()-1);    
+            note = note.substring(0, note.length()-2);    
 //            System.out.println(note);
             
             player.stream(new Pattern(note));

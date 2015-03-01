@@ -40,8 +40,7 @@ public class MainGUI {
     private int tab = 0;
     private Tab[] tabs = new Tab[6];
     private Item[] obj;
-    private MusicThread[] threads = {new MusicThread("Melody1"),new MusicThread("Melody2"),new MusicThread("Melody3"),
-                                     new MusicThread("Bass1"),new MusicThread("Bass2"),new MusicThread("Bass3")};
+    private MusicThread[] threads;
     private ArrayList<Section> sections = new ArrayList<>();
     private ArrayList<PatternInfo> patterns = new ArrayList<>();
     private ArrayList<Conditional> conditionals = new ArrayList<>();
@@ -66,10 +65,20 @@ public class MainGUI {
         
         tempMake(); ///Temporary
         
+        
+        String[] names = {"Melody1","Melody2","Melody3","Bass1","Bass2","Bass3"};
+        threads = new MusicThread[names.length];
+        for(int t = 0; t < threads.length; t++){
+            threads[t] = new MusicThread(names[t]);
+            new Thread(threads[t]).start();
+        }
+        
         tabs[0] = new QuickStart("Quick Start",new Color(136,0,21), mainpanel); 
         tabs[1] = new ObjectsView("Objects",new Color(112,146,190), mainpanel,obj); 
         tabs[2] = new RoomView("Room View",new Color(255,127,39), mainpanel); 
         tabs[3] = new PatternView("Pattern Builder",new Color(127,127,127), mainpanel);
+        sections = ((RoomView) tabs[2]).getSections();
+        patterns = ((PatternView) tabs[3]).getPatterns();
         tabs[4] = new ConditionalView("Conditions",new Color(133,146,64), mainpanel); 
         ((ConditionalView) tabs[4]).getInfo(obj,sections, patterns,threads);
         ((ConditionalView) tabs[4]).setupConditionals();
@@ -205,9 +214,31 @@ public class MainGUI {
             conditionals = ((ConditionalView) tabs[4]).getConditionals();
             ((ConditionalView) tabs[4]).getInfo(obj,sections, patterns,threads);
             
+            runConditionals();
             
             mainpanel.repaint(); 
             timer.schedule(new RemindTask(), tickRate);
+        }
+        
+        private void runConditionals(){
+            for(int c = 0; c < conditionals.size(); c++){
+                if(conditionals.get(c).isEnabled()){
+                    boolean doActions = true;
+                    for(int con = 0; con < conditionals.get(c).getConditions().size(); con++){
+                        if(!conditionals.get(c).getConditions().get(con).testCondition()){
+                            doActions = false;
+                            break;
+                        }
+                    }
+                    
+                    if(doActions){
+                        for(int a = 0; a < conditionals.get(c).getActions().size(); a++){
+                            conditionals.get(c).getActions().get(a).performAction();
+                        }
+                    }
+                }
+            }
+            
         }
      }
 }

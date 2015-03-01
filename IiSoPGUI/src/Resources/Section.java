@@ -19,7 +19,7 @@ public class Section {
     }
     
     public String getName(){
-        return this.file.getName();
+        return file.getName().substring(0, file.getName().length()-4);
     }
     
     public File getFile() {

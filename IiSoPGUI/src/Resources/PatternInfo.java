@@ -19,7 +19,7 @@ public class PatternInfo {
 
     public PatternInfo(File f){
         file = f;
-        this.name = file.getName();
+        this.name = file.getName().substring(0, file.getName().length()-4);
         try {
             Scanner s = new Scanner(f);
             bpm = s.nextInt();
@@ -130,6 +130,7 @@ public class PatternInfo {
                         note+=""+scaleAdj.getSelectedScale()[4-(c%5)]+((20-(c+1)+scaleAdj.backTrackAmount())/5+octave+1)+nlen+"+";
                     }
                 }
+                note = note.substring(0, note.length()-1);
                 note += " ";
             }
             

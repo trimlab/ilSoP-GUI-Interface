@@ -4,6 +4,7 @@ package Resources;
 import MusicThreads.MusicThread;
 import java.util.ArrayList;
 import java.util.Scanner;
+import org.jfugue.Pattern;
 
 /**
  *
@@ -19,38 +20,8 @@ public class Action {
     
     public Action(String action, ArrayList<PatternInfo> patterns, MusicThread[] threads){
         this.actionText = action;
-        Scanner s = new Scanner(action);
-        String scan = s.next();
         
-        if(scan.equals("PLAY")){
-            patternAction = true;
-            scan = s.next();
-            if(scan.equals("PATTERN")){
-                patternAction = true;
-                scan = "";
-                while(!scan.endsWith("IN "))
-                    scan += s.next() + " ";
-                scan = scan.substring(0, scan.length()-1);
-                for(int i = 0; i < patterns.size(); i++){
-                    if(patterns.get(i).getName().equals(scan)){
-                        pattern = patterns.get(i);
-                        break;
-                    }
-                }
-            }else{
-                note = scan;
-                scan = s.next(); // IN
-            }
-            threadName = s.next();
-            for(int c = 0; c < threads.length; c++){
-                if(threads[c].getName().equals(threadName)){
-                    thread = threads[c];
-                    break;
-                }
-            }
-        }
-        
-        s.close();
+        this.updateAction(patterns, threads);
     }
     
     public String toString(){
@@ -75,7 +46,7 @@ public class Action {
             scan = "";
             while(!scan.endsWith("IN "))
                 scan += s.next() + " ";
-            scan = scan.substring(0, scan.length()-1);
+            scan = scan.substring(0, scan.length()-4);
             for(int i = 0; i < patterns.size(); i++){
                 if(patterns.get(i).getName().equals(scan)){
                     pattern = patterns.get(i);
@@ -96,8 +67,12 @@ public class Action {
     }
     
     public void performAction(){
-        if(this.thread != null){
-            
+        if(this.thread != null && (note != null || pattern != null)){
+            if(!this.patternAction)
+                this.thread.receivePattern(new Pattern(note));
+            else{
+                this.thread.receivePattern(new Pattern(pattern.toString()));
+            }
         }
     }
 }

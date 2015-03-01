@@ -134,7 +134,7 @@ public class RoomView extends Tab{
             }
             if(f == hover) g.setColor(Color.red);
             else g.setColor(Color.black);
-            g.drawString(sections.get(f).getName().substring(0, sections.get(f).getName().length()-4), super.getPanel().getWidth()-260, 180+25*f);
+            g.drawString(sections.get(f).getName(), super.getPanel().getWidth()-260, 180+25*f);
             g.fillOval(super.getPanel().getWidth()-270, 170+25*f, 7, 7);
         }
         g.setFont(new Font("ARIAL", Font.PLAIN, 12));

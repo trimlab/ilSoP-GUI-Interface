@@ -16,7 +16,7 @@ public class PatTextArea extends JTextField implements ActionListener, KeyListen
     private int max = 0;
     
     public void actionPerformed(ActionEvent e) {
-        System.out.println(this.getText());   
+        //System.out.println(this.getText());   
     }
     
     public void keyTyped(KeyEvent e) {

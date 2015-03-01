@@ -2,10 +2,16 @@
 package Resources;
 
 import MusicThreads.MusicThread;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -75,5 +81,83 @@ public class Conditional {
 
     public ArrayList<Action> getActions() {
         return actions;
+    }
+    
+    public void addConition(String condition){
+        try { 
+            conditions.add(new Condition(condition, objects, sections));
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(this.file)));
+            this.file = new File(file.getAbsolutePath());
+            out.println("if:");
+            for(int c = 0; c < this.conditions.size(); c++){
+                out.println(this.conditions.get(c).toString());
+            }
+            out.println("then:");
+            for(int a = 0; a < this.actions.size(); a++){
+                out.println(this.actions.get(a).toString());
+            }
+            out.close();
+        } catch (IOException ex) {}
+    }
+    
+    public void addAction(String action){
+        try { 
+            actions.add(new Action(action, patterns, threads));
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(this.file)));
+            this.file = new File(file.getAbsolutePath());
+            out.println("if:");
+            for(int c = 0; c < this.conditions.size(); c++){
+                out.println(this.conditions.get(c).toString());
+            }
+            out.println("then:");
+            for(int a = 0; a < this.actions.size(); a++){
+                out.println(this.actions.get(a).toString());
+            }
+            out.close();
+        } catch (IOException ex) {}
+    }
+    
+    public void deleteCondtion(String condition){
+        try { 
+            boolean deleted = false;
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(this.file)));
+            this.file = new File(file.getAbsolutePath());
+            out.println("if:");
+            for(int c = 0; c < this.conditions.size(); c++){
+                if(this.conditions.get(c).toString().equals(condition) && !deleted){
+                    deleted = true;
+                    this.conditions.remove(c);
+                    c--;
+                }else
+                out.println(this.conditions.get(c).toString());
+            }
+            out.println("then:");
+            for(int a = 0; a < this.actions.size(); a++){
+                out.println(this.actions.get(a).toString());
+            }
+            out.close();
+        } catch (IOException ex) {}
+    }
+    
+    public void deleteAction(String action){
+        try { 
+            boolean deleted = false;
+            PrintWriter out = new PrintWriter(new BufferedWriter(new FileWriter(this.file)));
+            this.file = new File(file.getAbsolutePath());
+            out.println("if:");
+            for(int c = 0; c < this.conditions.size(); c++){
+                out.println(this.conditions.get(c).toString());
+            }
+            out.println("then:");
+            for(int a = 0; a < this.actions.size(); a++){
+                if(this.actions.get(a).toString().equals(action) && !deleted){
+                    deleted = true;
+                    this.actions.remove(a);
+                    a--;
+                }else
+                out.println(this.actions.get(a).toString());
+            }
+            out.close();
+        } catch (IOException ex) {}
     }
 }
