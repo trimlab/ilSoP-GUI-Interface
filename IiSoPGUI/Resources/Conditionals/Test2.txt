@@ -1,0 +1,5 @@
+if:
+FootL IN Section A
+HandL zVel >= 3.0
+then:
+PLAY PATTERN Harpin Down IN Melody1

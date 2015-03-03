@@ -1,0 +1,3 @@
+if:
+HandL IN Section A
+then:

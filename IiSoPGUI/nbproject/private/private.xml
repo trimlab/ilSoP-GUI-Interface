@@ -3,12 +3,14 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
-            <file>file:/C:/Users/Xazaviar/Documents/GitHub/ilSoP-GUI-Interface/IiSoPGUI/src/Main/Main.java</file>
-=======
+            <file>file:/C:/Users/temp/Documents/GitHub/ilSoP-GUI-Interface/IiSoPGUI/src/Tabs/Tab.java</file>
+            <file>file:/C:/Users/temp/Documents/GitHub/ilSoP-GUI-Interface/IiSoPGUI/src/Resources/Buttons/RoomAddButton.java</file>
             <file>file:/C:/Users/temp/Documents/GitHub/ilSoP-GUI-Interface/IiSoPGUI/src/Main/MainGUI.java</file>
-            <file>file:/C:/Users/temp/Documents/GitHub/ilSoP-GUI-Interface/IiSoPGUI/src/Resources/Item.java</file>
->>>>>>> origin/master
+            <file>file:/C:/Users/temp/Documents/GitHub/ilSoP-GUI-Interface/IiSoPGUI/src/Tabs/QuickStart.java</file>
+            <file>file:/C:/Users/temp/Documents/GitHub/ilSoP-GUI-Interface/IiSoPGUI/src/Resources/Conditional.java</file>
+            <file>file:/C:/Users/temp/Documents/GitHub/ilSoP-GUI-Interface/IiSoPGUI/src/Resources/Buttons/StartButton.java</file>
+            <file>file:/C:/Users/temp/Documents/GitHub/ilSoP-GUI-Interface/IiSoPGUI/src/Tabs/PatternView.java</file>
+            <file>file:/C:/Users/temp/Documents/GitHub/ilSoP-GUI-Interface/IiSoPGUI/src/Tabs/Settings.java</file>
         </group>
     </open-files>
 </project-private>

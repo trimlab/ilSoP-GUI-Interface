@@ -1,5 +1,4 @@
 if:
-FootL x = 0.0
-HandL IN Right Side
+HandR y > 1.5
+FootL x <= 0.0
 then:
-PLAY G3 IN Melody1
