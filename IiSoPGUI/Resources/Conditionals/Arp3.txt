@@ -1,2 +1,4 @@
 if:
+HandR IN Section C
 then:
+PLAY PATTERN Arp3 IN Melody1

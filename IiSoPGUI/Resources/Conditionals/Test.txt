@@ -1,4 +1,6 @@
 if:
-HandR y > 1.5
-FootL x <= 0.0
+HandR x < 0.0
 then:
+PLAY G3 IN Melody1
+PLAY PATTERN My Super Cool Skills IN Melody2
+PLAY G2 IN Melody3

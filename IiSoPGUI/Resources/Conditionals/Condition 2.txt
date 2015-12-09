@@ -1,7 +1,4 @@
 if:
-HandR IN Section 1
-HandR AccAvg > 1.2 
-FootR xVel < 0.0
 then:
-PLAY G3 in Bass1
 PLAY PATTERN Pattern A IN Melody2
+PLAY PATTERN Smiley Face IN Bass1
