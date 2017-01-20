@@ -9,6 +9,9 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import javax.swing.JPanel;
 
 /**
@@ -18,10 +21,15 @@ import javax.swing.JPanel;
 public class ObjectsView extends Tab{
 
     private Item[] objects;
-    private ObjButton[] buttons;
-    private ObjEnabledButton[] butts;
+    private ObjButton buttons;
+    private ObjEnabledButton butts;
     
-    private int boxWid, boxHei;
+    private final int boxWid = 300;
+    private int boxHei;
+    private int selected = 0;
+    private int hover = -1;
+    
+    int perCol = 31;
             
     /**
      * The default constructor (not in use)
@@ -40,14 +48,11 @@ public class ObjectsView extends Tab{
         super.setColor(c);
         super.setPanel(p);
         objects = o;
-        buttons = new ObjButton[o.length];
-        butts = new ObjEnabledButton[o.length];
         
         for(int cl = 0; cl < objects.length; cl++){
             objects[cl].setColor(0);
         }
-        
-        
+ 
     }
     
     /**
@@ -56,77 +61,88 @@ public class ObjectsView extends Tab{
      *          The graphics
      */
     public void draw(Graphics g){
-        boxWid = (super.getPanel().getWidth()-100)/objects.length;
+        //boxWid = (super.getPanel().getWidth()-100)/objects.length;
         boxHei = super.getPanel().getHeight()-super.getHeight()-100;
         
         Graphics2D g2d = (Graphics2D) g;
         
+        //Draw List
+        g.setFont(new Font("ARIAL", Font.BOLD, 16));
+        
         for(int o = 0; o < objects.length; o++){
-            //Draw Boxes
-            g.setColor(objects[o].getColor());
-            g.fillRect(o*boxWid+50,super.getHeight()+50, boxWid, boxHei);
-            g.setColor(Color.black);
-            g2d.setStroke(new BasicStroke(2F));
-            g.drawRect(o*boxWid+50,super.getHeight()+50, boxWid, boxHei);
-            g2d.setStroke(new BasicStroke(1F));
             
-            //Draw Data
-            g.setFont(new Font("ARIAL", Font.BOLD, 36));
-            g.drawString(objects[o].getName(), o*boxWid+boxWid/2, 130);
-            g.setFont(new Font("ARIAL", Font.BOLD, 20));
+            if(o == selected){
+                g.setColor(new Color(112,112,255));
+                g.fillRect(20+(o/perCol)*150, 45+20*(o%perCol), 150, 20);
+            }
+            if(o == hover) g.setColor(Color.white);
+            else g.setColor(objects[o].getColor());
+            g.drawString(objects[o].getName(), 25+(o/perCol)*150, (o%perCol)*20+60);
             
-            g.drawString("X: "+objects[o].getX(), o*boxWid+boxWid/2-40, 155);
-            g.drawString("X Vel: "+objects[o].getxVel(), o*boxWid+boxWid/2-40, 175);
-            g.drawString("X Acc: "+objects[o].getxAcc(), o*boxWid+boxWid/2-40, 195);
-            g.drawString("X VelAvg: "+objects[o].getxVelAvg(), o*boxWid+boxWid/2-40, 215);
-            g.drawString("X AccAvg: "+objects[o].getxAccAvg(), o*boxWid+boxWid/2-40, 235);
-            g.drawString("Y: "+objects[o].getY(), o*boxWid+boxWid/2-40, 255);
-            g.drawString("Y Vel: "+objects[o].getyVel(), o*boxWid+boxWid/2-40, 275);
-            g.drawString("Y Acc: "+objects[o].getyAcc(), o*boxWid+boxWid/2-40, 295);
-            g.drawString("Y VelAvg: "+objects[o].getyVelAvg(), o*boxWid+boxWid/2-40, 315);
-            g.drawString("Y AccAvg: "+objects[o].getyAccAvg(), o*boxWid+boxWid/2-40, 335);
-            g.drawString("Z: "+objects[o].getZ(), o*boxWid+boxWid/2-40, 355);
-            g.drawString("Z Vel: "+objects[o].getzVel(), o*boxWid+boxWid/2-40, 375);
-            g.drawString("Z Acc: "+objects[o].getzAcc(), o*boxWid+boxWid/2-40, 395);
-            g.drawString("Z VelAvg: "+objects[o].getzVelAvg(), o*boxWid+boxWid/2-40, 415);
-            g.drawString("Z AccAvg: "+objects[o].getzAccAvg(), o*boxWid+boxWid/2-40, 435);
-            g.drawString("C Vel: "+objects[o].getcVel(), o*boxWid+boxWid/2-40, 455);
-            g.drawString("C Acc: "+objects[o].getcAcc(), o*boxWid+boxWid/2-40, 475);
-            g.drawString("C VelAvg: "+objects[o].getcVelAvg(), o*boxWid+boxWid/2-40, 495);
-            g.drawString("C AccAvg: "+objects[o].getcAccAvg(), o*boxWid+boxWid/2-40, 515);
-            
-            g.setFont(new Font("ARIAL", Font.PLAIN, 12));
-            
-        }
+        }  
+        //Draw Data
+
+        int x = (super.getPanel().getWidth()-(boxWid+50))+15;
+
+        g.setColor(objects[selected].getColor());
+        g.fillRect((super.getPanel().getWidth()-(boxWid+50)),super.getHeight()+50, boxWid, boxHei);
+        g.setColor(Color.black);
+        g2d.setStroke(new BasicStroke(2F));
+        g.drawRect((super.getPanel().getWidth()-(boxWid+50)),super.getHeight()+50, boxWid, boxHei);
+        g2d.setStroke(new BasicStroke(1F));
+        
+        g.setFont(new Font("ARIAL", Font.BOLD, 36));
+        g.drawString(objects[selected].getName(),                   x, 120);
+        g.setFont(new Font("ARIAL", Font.BOLD, 20));
+        g.drawString("X: "+objects[selected].getX(),                x, 155);
+        g.drawString("X Vel: "+objects[selected].getxVel(),         x, 175);
+        g.drawString("X Acc: "+objects[selected].getxAcc(),         x, 195);
+        g.drawString("X VelAvg: "+objects[selected].getxVelAvg(),   x, 215);
+        g.drawString("X AccAvg: "+objects[selected].getxAccAvg(),   x, 235);
+        g.drawString("Y: "+objects[selected].getY(),                x, 255);
+        g.drawString("Y Vel: "+objects[selected].getyVel(),         x, 275);
+        g.drawString("Y Acc: "+objects[selected].getyAcc(),         x, 295);
+        g.drawString("Y VelAvg: "+objects[selected].getyVelAvg(),   x, 315);
+        g.drawString("Y AccAvg: "+objects[selected].getyAccAvg(),   x, 335);
+        g.drawString("Z: "+objects[selected].getZ(),                x, 355);
+        g.drawString("Z Vel: "+objects[selected].getzVel(),         x, 375);
+        g.drawString("Z Acc: "+objects[selected].getzAcc(),         x, 395);
+        g.drawString("Z VelAvg: "+objects[selected].getzVelAvg(),   x, 415);
+        g.drawString("Z AccAvg: "+objects[selected].getzAccAvg(),   x, 435);
+        g.drawString("C Vel: "+objects[selected].getcVel(),         x, 455);
+        g.drawString("C Acc: "+objects[selected].getcAcc(),         x, 475);
+        g.drawString("C VelAvg: "+objects[selected].getcVelAvg(),   x, 495);
+        g.drawString("C AccAvg: "+objects[selected].getcAccAvg(),   x, 515);
+
+        g.setFont(new Font("ARIAL", Font.PLAIN, 12));
+             
     }
     
     public void update(Item[] t){
-        int len = objects.length;
         this.objects = t;
-        
-            //Check if remake needed
-            if(len != objects.length){
-                buttons = new ObjButton[objects.length];
-                butts = new ObjEnabledButton[objects.length];
-
-                for(int b = 0; b < buttons.length; b++){
-                buttons[b] = new ObjButton();
-                buttons[b].setText("COLOR");
-                buttons[b].setObj(objects[b]);
-                buttons[b].setBounds(b*(super.getPanel().getWidth()-100)/objects.length+80, super.getPanel().getHeight()-100, 100, 30);
-                buttons[b].addActionListener(buttons[b]);
-                buttons[b].setFocusable(false);
-                super.getPanel().add(buttons[b]);
-
-                butts[b] = new ObjEnabledButton();
-                butts[b].setText("DISABLE");
-                butts[b].setObj(objects[b]);
-                butts[b].setBounds(b*(super.getPanel().getWidth()-100)/objects.length+(super.getPanel().getWidth()-100)/objects.length-80, super.getPanel().getHeight()-100, 100, 30);
-                butts[b].addActionListener(butts[b]);
-                butts[b].setFocusable(false);
-                super.getPanel().add(butts[b]);
-            }
+    }
+    
+    public void newSelect(){ 
+        if(buttons!=null){
+            super.getPanel().remove(buttons);
+            super.getPanel().remove(butts);
         }
+        
+        buttons = new ObjButton();
+        buttons.setText("COLOR");
+        buttons.setObj(objects[selected]);
+        buttons.setBounds((super.getPanel().getWidth()-(boxWid+50))+25, super.getPanel().getHeight()-100, 100, 30);
+        buttons.addActionListener(buttons);
+        buttons.setFocusable(false);
+        super.getPanel().add(buttons);
+
+        butts = new ObjEnabledButton();
+        butts.setText((objects[selected].isEnabled()?"DISABLE":"ENABLE"));
+        butts.setObj(objects[selected]);
+        butts.setBounds((super.getPanel().getWidth()-(boxWid+50))+175, super.getPanel().getHeight()-100, 100, 30);
+        butts.addActionListener(butts);
+        butts.setFocusable(false);
+        super.getPanel().add(butts);
     }
     
     /**
@@ -134,22 +150,53 @@ public class ObjectsView extends Tab{
      */
     public void setupComponents(){
         //Setup Buttons
-        for(int b = 0; b < buttons.length; b++){
-            buttons[b] = new ObjButton();
-            buttons[b].setText("COLOR");
-            buttons[b].setObj(objects[b]);
-            buttons[b].setBounds(b*(super.getPanel().getWidth()-100)/objects.length+80, super.getPanel().getHeight()-100, 100, 30);
-            buttons[b].addActionListener(buttons[b]);
-            buttons[b].setFocusable(false);
-            super.getPanel().add(buttons[b]);
-            
-            butts[b] = new ObjEnabledButton();
-            butts[b].setText("DISABLE");
-            butts[b].setObj(objects[b]);
-            butts[b].setBounds(b*(super.getPanel().getWidth()-100)/objects.length+(super.getPanel().getWidth()-100)/objects.length-80, super.getPanel().getHeight()-100, 100, 30);
-            butts[b].addActionListener(butts[b]);
-            butts[b].setFocusable(false);
-            super.getPanel().add(butts[b]);
+        newSelect();
+        
+        super.getPanel().addMouseListener(new Mouse());
+        super.getPanel().addMouseMotionListener(new Mouse2());
+    }
+    
+        private class Mouse extends JPanel implements MouseListener{
+        
+        //Unused
+        public void mouseClicked(MouseEvent e) {}
+        public void mouseReleased(MouseEvent e) {}
+        public void mouseEntered(MouseEvent e) {}
+        public void mouseExited(MouseEvent e) {}
+        
+        /**
+         * What to do when the mouse is pressed
+         * @param e 
+         *          The information about the MouseEvent
+         */
+        public void mousePressed(MouseEvent e) {
+            if(hover!=-1){
+                selected = hover;
+                newSelect();
+            }
         }
+        
+    }
+    
+    private class Mouse2 extends JPanel implements MouseMotionListener{
+        public void mouseDragged(MouseEvent e) {}
+
+        /**
+         * What to do when the mouse is moving
+         * @param e 
+         *          The information about the MouseEvent
+         */
+        public void mouseMoved(MouseEvent e) {
+            boolean h = false;
+            for(int f = 0; f < objects.length; f++){
+                if(e.getX()>25+(f/perCol)*150 && e.getX()<175+(f/perCol)*150 && e.getY()<60+20*(f%perCol) && e.getY()>40+20*(f%perCol)){
+                    hover = f;
+                    h = true;
+                    break;
+                }
+            }
+            if(!h) hover = -1;
+        }
+        
     }
 }

@@ -103,11 +103,11 @@ public class MainGUI {
     }  
     
     private void tempMake(){
-        obj = new Item[1];
+        obj = new Item[160];
 //        System.out.println(obj.length);
         String[] names = {"FootL","HandL","FootR","HandR"};
         for(int i = 0; i < obj.length; i++){
-            obj[i] = new Item(names[i]);    
+            obj[i] = new Item(names[i%4]+""+(i/4));    
             obj[i].updateValues(0, 0, 0, 1.0*10/1000);
         }
     }

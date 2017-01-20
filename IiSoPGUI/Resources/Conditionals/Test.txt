@@ -1,5 +1,0 @@
-if:
-FootL x = 0.0
-HandL IN Right Side
-then:
-PLAY G3 IN Melody1
