@@ -10,7 +10,7 @@ import javax.swing.JPanel;
  * This is the generalize tab
  * @author Xazaviar
  */
-public class Tab {
+public abstract class Tab {
 
     private Color back;
     private String name;
@@ -116,7 +116,7 @@ public class Tab {
      * @return 
      *          An array of the .txt files in the given directory
      */
-    public File[] finder(String dirName){
+    public static File[] finder(String dirName){
     	File dir = new File(dirName);
     	return dir.listFiles(new FilenameFilter() { 
     	         public boolean accept(File dir, String filename)

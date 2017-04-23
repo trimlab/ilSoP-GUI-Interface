@@ -2,5 +2,6 @@ if:
 FootL IN Floor
 FootR IN Screen
 HandL cVel >= 2.3
+FootL x >= 1.0
 then:
 PLAY PATTERN Pattern A IN Melody1

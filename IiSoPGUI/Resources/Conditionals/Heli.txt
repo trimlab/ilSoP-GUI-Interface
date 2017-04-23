@@ -1,0 +1,4 @@
+if:
+Heli IN Room
+then:
+PLAY PATTERN Heli IN Melody1

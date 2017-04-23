@@ -28,7 +28,7 @@ public class RoomAddButton extends JButton implements ActionListener{
         if(filename.length()>1) filename+=".txt";
         else filename = "NEW SECTION.txt";
         for(i = 0; i < ref.size(); i++){
-            if(ref.get(i).getName().equals(filename)){
+            if(filename.equals(ref.get(i).getName()+".txt")){
                 rewrite = true;
                 break;
             }

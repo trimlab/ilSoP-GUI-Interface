@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFrame;
 
 /**
@@ -52,6 +50,7 @@ public class MainGUI {
     private ArrayList<PatternInfo> patterns = new ArrayList<>();
     private ArrayList<Conditional> conditionals = new ArrayList<>();
     private ReceiveThread dataIn;
+    private boolean editable = true;
     
     
     /**
@@ -71,7 +70,10 @@ public class MainGUI {
         mainpanel.setFocusable(true);
         mainpanel.requestFocus();
         
-        tempMake(); ///Temporary
+        //tempMake(); ///Temporary
+        obj = new Item[1];
+        obj[0] = new Item("n/a");    
+        obj[0].updateValues(0, 0, 0, 1.0*10/1000);
         
         //Set up server Connection
         dataIn = new ReceiveThread();
@@ -83,8 +85,7 @@ public class MainGUI {
             threads[t] = new MusicThread(names[t]);
             new Thread(threads[t]).start();
         }
-        
-        tabs[0] = new QuickStart("Quick Start",new Color(136,0,21), mainpanel); 
+         
         tabs[1] = new ObjectsView("Objects",new Color(112,146,190), mainpanel,obj); 
         tabs[2] = new RoomView("Room View",new Color(255,127,39), mainpanel); 
         tabs[3] = new PatternView("Pattern Builder",new Color(127,127,127), mainpanel);
@@ -94,12 +95,14 @@ public class MainGUI {
         ((ConditionalView) tabs[4]).getInfo(obj,sections, patterns,threads);
         ((ConditionalView) tabs[4]).setupConditionals();
         tabs[5] = new Settings("Settings",new Color(163,73,164), mainpanel);
+        tabs[0] = new QuickStart("Quick Start",new Color(136,0,21), mainpanel);
         
         frame.getContentPane().add(mainpanel);
         frame.pack();
         frame.setVisible(true);
         timer.schedule(new RemindTask(), tickRate);
         tabs[0].setupComponents();
+        ((QuickStart) tabs[0]).update(conditionals);
     }  
     
     private void tempMake(){
@@ -215,11 +218,13 @@ public class MainGUI {
     public class RemindTask extends TimerTask{
         public void run(){  
             
+            editable = ((QuickStart) tabs[0]).canEdit();
             sections = ((RoomView) tabs[2]).getSections();
             patterns = ((PatternView) tabs[3]).getPatterns();
             conditionals = ((ConditionalView) tabs[4]).getConditionals();
             ((ConditionalView) tabs[4]).getInfo(obj,sections, patterns,threads);
             ((ObjectsView) tabs[1]).update(obj);
+            ((QuickStart) tabs[0]).update(conditionals);
             
             runConditionals();
             

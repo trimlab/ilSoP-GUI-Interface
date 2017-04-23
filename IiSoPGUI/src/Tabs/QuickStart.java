@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import Resources.*;
 import java.awt.Font;
 import java.io.File;
+import java.util.ArrayList;
 
 /**
  * The quick start tab
@@ -23,6 +24,8 @@ public class QuickStart extends Tab{
     private StartTextArea textField1;
     private StartDropDown dropDown1;
     private StartCheckBox checkBox1;
+    
+    private ArrayList<Conditional> conditionals;
     
     /**
      * The default constructor (not in use)
@@ -42,24 +45,33 @@ public class QuickStart extends Tab{
         super.setPanel(p);
     }
     
+    
+    public boolean canEdit(){
+        if(this.checkBox1 == null)
+            return false;
+        return this.checkBox1.isChecked();
+    }
+    
+    public void update(ArrayList<Conditional> c){
+        this.conditionals = c;
+    }
+    
     /**
      * The draw method that creates the tab
      * @param g
      *          The graphics
-     * @param p 
-     *          The panel to draw on
      */
     public void draw(Graphics g){
         g.setColor(Color.BLACK);
         g.setFont(new Font("ARIAL", Font.BOLD, 20));
         g.drawString("Enable Editing:", super.getPanel().getWidth()/2-140, super.getPanel().getHeight()/2-20);
         g.setFont(new Font("ARIAL", Font.PLAIN, 12));
+        if(button1 != null && conditionals != null && dropDown1 != null)
+            button1.update(conditionals, dropDown1.getSelectedIndex());
     }
     
     /**
      * Sets up the new components for the new tab
-     * @param p 
-     *          The panel to set the components on
      */
     public void setupComponents(){
         //Setup the Button
@@ -83,13 +95,13 @@ public class QuickStart extends Tab{
         super.getPanel().add(dropDown1);
         
         //Set up TextArea
-        textField1 = new StartTextArea();
-        textField1.setBounds(super.getPanel().getWidth()/2-175, super.getPanel().getHeight()/2-120, 350, 30);
-        textField1.addActionListener(textField1);
-        textField1.addKeyListener(textField1);
-        textField1.setMaxChars(50);
-        textField1.setFocusable(true);
-        super.getPanel().add(textField1);
+//        textField1 = new StartTextArea();
+//        textField1.setBounds(super.getPanel().getWidth()/2-175, super.getPanel().getHeight()/2-120, 350, 30);
+//        textField1.addActionListener(textField1);
+//        textField1.addKeyListener(textField1);
+//        textField1.setMaxChars(50);
+//        textField1.setFocusable(true);
+//        super.getPanel().add(textField1);
         
         //Set up check box
         checkBox1 = new StartCheckBox();
