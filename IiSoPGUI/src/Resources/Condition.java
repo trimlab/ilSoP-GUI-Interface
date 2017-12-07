@@ -1,6 +1,7 @@
 
 package Resources;
 
+import Resources.Items.Item;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -68,6 +69,7 @@ public class Condition {
         Scanner s = new Scanner(conditionText);
         String scan = s.next();
         for(int i = 0; i < list.length; i++){
+            if(list[i]!=null)
             if(list[i].getName().equals(scan)){
                 object = list[i];
             }

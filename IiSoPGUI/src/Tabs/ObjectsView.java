@@ -1,9 +1,10 @@
 
 package Tabs;
 
-import Resources.Item;
+import Resources.Items.Item;
 import Resources.Buttons.ObjButton;
 import Resources.Buttons.ObjEnabledButton;
+import Resources.Items.LeapMotion.LeapHand;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -28,8 +29,9 @@ public class ObjectsView extends Tab{
     private int boxHei;
     private int selected = 0;
     private int hover = -1;
+    private int mX = 0, mY = 0;
     
-    int perCol = 31;
+    int perCol = 4;
             
     /**
      * The default constructor (not in use)
@@ -65,26 +67,58 @@ public class ObjectsView extends Tab{
         boxHei = super.getPanel().getHeight()-super.getHeight()-100;
         
         Graphics2D g2d = (Graphics2D) g;
+
+        String source = "";
+        if(objects[0]!=null) source = objects[0].getSource();
+        else source = objects[1].getSource();
+        
+        //Draw source
+        g.setColor(Color.black);
+        g.setFont(new Font("ARIAL", Font.BOLD, 20));
+        g.drawString(source, 15, 60);
         
         //Draw List
         g.setFont(new Font("ARIAL", Font.BOLD, 16));
         
-        for(int o = 0; o < objects.length; o++){
-            
-            if(o == selected){
-                g.setColor(new Color(112,112,255));
-                g.fillRect(20+(o/perCol)*150, 45+20*(o%perCol), 150, 20);
+        //line height adjuster
+        int yAdj = 0, sect = 0;
+        for(int o = 0; o < objects.length; o++, sect++){
+            if(objects[o]!=null){
+                //Check for new Source
+                if(!objects[o].getSource().equals(source)){
+                    source = objects[o].getSource();
+                    yAdj += 20*perCol + 30;
+                    sect = 0;
+                    //Draw source
+                    g.setColor(Color.black);
+                    g.setFont(new Font("ARIAL", Font.BOLD, 20));
+                    g.drawString(source, 15, 60+yAdj);
+                    
+                    //Draw List
+                    g.setFont(new Font("ARIAL", Font.BOLD, 16));
+                }
+                
+                if(mX>25+(sect/perCol)*150 && mX<175+(sect/perCol)*150 && mY<85+20*(sect%perCol)+yAdj && mY>65+20*(sect%perCol)+yAdj){
+                    hover = o;
+                }
+                
+                if(o == selected){
+                    g.setColor(new Color(112,112,255));
+                    g.fillRect(20+(sect/perCol)*150, 70+20*(sect%perCol)+yAdj, 150, 20);
+                }
+                if(o == hover) g.setColor(Color.white);
+                else g.setColor(objects[o].getColor());
+                g.drawString(objects[o].getName(), 25+(sect/perCol)*150, (sect%perCol)*20+85+yAdj);
             }
-            if(o == hover) g.setColor(Color.white);
-            else g.setColor(objects[o].getColor());
-            g.drawString(objects[o].getName(), 25+(o/perCol)*150, (o%perCol)*20+60);
             
         }  
         //Draw Data
-
         int x = (super.getPanel().getWidth()-(boxWid+50))+15;
 
-        g.setColor(objects[selected].getColor());
+        int opt = selected;
+        if(hover > -1) opt = hover;
+        
+        g.setColor(objects[opt].getColor());
         g.fillRect((super.getPanel().getWidth()-(boxWid+50)),super.getHeight()+50, boxWid, boxHei);
         g.setColor(Color.black);
         g2d.setStroke(new BasicStroke(2F));
@@ -92,27 +126,33 @@ public class ObjectsView extends Tab{
         g2d.setStroke(new BasicStroke(1F));
         
         g.setFont(new Font("ARIAL", Font.BOLD, 36));
-        g.drawString(objects[selected].getName(),                   x, 120);
+        g.drawString(objects[opt].getName(),                   x, 120);
         g.setFont(new Font("ARIAL", Font.BOLD, 20));
-        g.drawString("X: "+objects[selected].getX(),                x, 155);
-        g.drawString("X Vel: "+objects[selected].getxVel(),         x, 175);
-        g.drawString("X Acc: "+objects[selected].getxAcc(),         x, 195);
-        g.drawString("X VelAvg: "+objects[selected].getxVelAvg(),   x, 215);
-        g.drawString("X AccAvg: "+objects[selected].getxAccAvg(),   x, 235);
-        g.drawString("Y: "+objects[selected].getY(),                x, 255);
-        g.drawString("Y Vel: "+objects[selected].getyVel(),         x, 275);
-        g.drawString("Y Acc: "+objects[selected].getyAcc(),         x, 295);
-        g.drawString("Y VelAvg: "+objects[selected].getyVelAvg(),   x, 315);
-        g.drawString("Y AccAvg: "+objects[selected].getyAccAvg(),   x, 335);
-        g.drawString("Z: "+objects[selected].getZ(),                x, 355);
-        g.drawString("Z Vel: "+objects[selected].getzVel(),         x, 375);
-        g.drawString("Z Acc: "+objects[selected].getzAcc(),         x, 395);
-        g.drawString("Z VelAvg: "+objects[selected].getzVelAvg(),   x, 415);
-        g.drawString("Z AccAvg: "+objects[selected].getzAccAvg(),   x, 435);
-        g.drawString("C Vel: "+objects[selected].getcVel(),         x, 455);
-        g.drawString("C Acc: "+objects[selected].getcAcc(),         x, 475);
-        g.drawString("C VelAvg: "+objects[selected].getcVelAvg(),   x, 495);
-        g.drawString("C AccAvg: "+objects[selected].getcAccAvg(),   x, 515);
+        g.drawString("X: "+objects[opt].getX(),                x, 155);
+        g.drawString("X Vel: "+objects[opt].getxVel(),         x, 175);
+        g.drawString("X Acc: "+objects[opt].getxAcc(),         x, 195);
+        g.drawString("X VelAvg: "+objects[opt].getxVelAvg(),   x, 215);
+        g.drawString("X AccAvg: "+objects[opt].getxAccAvg(),   x, 235);
+        g.drawString("Y: "+objects[opt].getY(),                x, 255);
+        g.drawString("Y Vel: "+objects[opt].getyVel(),         x, 275);
+        g.drawString("Y Acc: "+objects[opt].getyAcc(),         x, 295);
+        g.drawString("Y VelAvg: "+objects[opt].getyVelAvg(),   x, 315);
+        g.drawString("Y AccAvg: "+objects[opt].getyAccAvg(),   x, 335);
+        g.drawString("Z: "+objects[opt].getZ(),                x, 355);
+        g.drawString("Z Vel: "+objects[opt].getzVel(),         x, 375);
+        g.drawString("Z Acc: "+objects[opt].getzAcc(),         x, 395);
+        g.drawString("Z VelAvg: "+objects[opt].getzVelAvg(),   x, 415);
+        g.drawString("Z AccAvg: "+objects[opt].getzAccAvg(),   x, 435);
+        g.drawString("C Vel: "+objects[opt].getcVel(),         x, 455);
+        g.drawString("C Acc: "+objects[opt].getcAcc(),         x, 475);
+        g.drawString("C VelAvg: "+objects[opt].getcVelAvg(),   x, 495);
+        g.drawString("C AccAvg: "+objects[opt].getcAccAvg(),   x, 515);
+        
+        if(objects[opt].getType().equals("LEAPMOTION")){
+            g.drawString("pitch: "+((LeapHand)objects[opt]).getPitch(),   x, 535);
+            g.drawString("roll: "+((LeapHand)objects[opt]).getRoll(),   x, 555);
+            g.drawString("yaw: "+((LeapHand)objects[opt]).getYaw(),   x, 575);
+        }
 
         g.setFont(new Font("ARIAL", Font.PLAIN, 12));
              
@@ -156,7 +196,7 @@ public class ObjectsView extends Tab{
         super.getPanel().addMouseMotionListener(new Mouse2());
     }
     
-        private class Mouse extends JPanel implements MouseListener{
+    private class Mouse extends JPanel implements MouseListener{
         
         //Unused
         public void mouseClicked(MouseEvent e) {}
@@ -187,15 +227,10 @@ public class ObjectsView extends Tab{
          *          The information about the MouseEvent
          */
         public void mouseMoved(MouseEvent e) {
-            boolean h = false;
-            for(int f = 0; f < objects.length; f++){
-                if(e.getX()>25+(f/perCol)*150 && e.getX()<175+(f/perCol)*150 && e.getY()<60+20*(f%perCol) && e.getY()>40+20*(f%perCol)){
-                    hover = f;
-                    h = true;
-                    break;
-                }
-            }
-            if(!h) hover = -1;
+            mX = e.getX();
+            mY = e.getY();
+            
+            hover = -1;
         }
         
     }

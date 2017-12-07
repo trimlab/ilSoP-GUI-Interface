@@ -3,7 +3,7 @@ package Resources.Buttons;
 
 import MusicThreads.MusicThread;
 import Resources.Conditional;
-import Resources.Item;
+import Resources.Items.Item;
 import Resources.PatternInfo;
 import Resources.Section;
 import java.awt.event.ActionEvent;

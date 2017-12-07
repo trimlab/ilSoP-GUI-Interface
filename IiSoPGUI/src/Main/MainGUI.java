@@ -3,12 +3,15 @@ package Main;
 
 import MusicThreads.MusicThread;
 import Resources.Conditional;
-import Resources.Item;
+import Resources.Items.*;
+import Resources.Items.Vicon.*;
+import Resources.Items.LeapMotion.*;
 import Resources.PatternInfo;
 import Resources.Section;
 import java.awt.Graphics;
 import javax.swing.JPanel;
 import Tabs.*;
+import com.leapmotion.leap.Controller;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -29,7 +32,7 @@ import javax.swing.JFrame;
  * This is the main interface that the user
  * sees and uses
  * 
- * @author Xazaviar
+ * @author Joseph Ryan
  */
 public class MainGUI {
 
@@ -52,6 +55,11 @@ public class MainGUI {
     private ReceiveThread dataIn;
     private boolean editable = true;
     
+     private ArrayList<String> sources = new ArrayList<>();
+    
+    //Leap Motion
+    private LeapMotionListener leapListener;
+    private Controller leapController;
     
     /**
      * The default constructor. Sets up the GUI
@@ -72,8 +80,10 @@ public class MainGUI {
         
         //tempMake(); ///Temporary
         obj = new Item[1];
-        obj[0] = new Item("n/a");    
+        obj[0] = new ViconObject("n/a","n/a");    
         obj[0].updateValues(0, 0, 0, 1.0*10/1000);
+        
+        setupLeapMotion();
         
         //Set up server Connection
         dataIn = new ReceiveThread();
@@ -105,15 +115,23 @@ public class MainGUI {
         ((QuickStart) tabs[0]).update(conditionals);
     }  
     
-    private void tempMake(){
-        obj = new Item[160];
-//        System.out.println(obj.length);
-        String[] names = {"FootL","HandL","FootR","HandR"};
-        for(int i = 0; i < obj.length; i++){
-            obj[i] = new Item(names[i%4]+""+(i/4));    
-            obj[i].updateValues(0, 0, 0, 1.0*10/1000);
-        }
+    private void setupLeapMotion(){
+        //Setup Leap Motion Listener
+        leapListener = new LeapMotionListener();
+        leapController = new Controller();
+
+        leapController.addListener(leapListener);
     }
+    
+//    private void tempMake(){
+//        obj = new Item[160];
+//        System.out.println(obj.length);
+//        String[] names = {"FootL","HandL","FootR","HandR"};
+//        for(int i = 0; i < obj.length; i++){
+//            obj[i] = new Item(names[i%4]+""+(i/4));    
+//            obj[i].updateValues(0, 0, 0, 1.0*10/1000);
+//        }
+//    }
     
 //*********************************************************   
 //  Other Classes
@@ -216,7 +234,9 @@ public class MainGUI {
     }
     
     public class RemindTask extends TimerTask{
+        
         public void run(){  
+            gatherLeapData();
             
             editable = ((QuickStart) tabs[0]).canEdit();
             sections = ((RoomView) tabs[2]).getSections();
@@ -230,6 +250,66 @@ public class MainGUI {
             
             mainpanel.repaint(); 
             timer.schedule(new RemindTask(), tickRate);
+        }
+        
+        
+        boolean isSource = false;
+        private void gatherLeapData(){
+            LeapHand[] temp = leapListener.getHands();
+            if(temp[0]!=null || temp[1]!=null){
+                
+                if(!isSource){
+                    isSource = true;
+                    sources.add("Leap Motion");
+                }
+                
+                boolean[] updated = {false,false};
+                for(Item i: obj){
+                    if(i!=null){
+                        if(i.getType().equals("LEAPMOTION") && i.getName().equals("Left hand")){
+                            if(temp[0]!=null) i = temp[0];
+                            updated[0] = true;
+                        }
+                        else if(i.getType().equals("LEAPMOTION") && i.getName().equals("Right hand")){
+                            if(temp[1]!=null) i = temp[1];
+                            updated[1] = true;
+                        }
+                    }
+                }
+                
+                if(!updated[0] && !updated[1]){
+                    if(obj[0].getName().equals("n/a")){
+                        obj = new Item[2];
+                        obj[0] = temp[0];
+                        obj[1] = temp[1];
+                    } 
+                    else{
+                        Item[] transfer = obj;
+                        obj = new Item[obj.length+2];
+                        int i = 0;
+                        for(; i < obj.length-2; i++){
+                            obj[i] = transfer[i];
+                        }
+                        obj[i] = temp[0];
+                        obj[i+1] = temp[1];
+                    }
+                }
+                else if(!updated[0]){
+                    for(int i = 0; i < obj.length; i++){
+                        if(obj[i]==null){
+                            obj[i] = temp[0];
+                            break;
+                        }   
+                    }
+                }else if(!updated[1]){
+                    for(int i = 0; i < obj.length; i++){
+                        if(obj[i]==null){
+                            obj[i] = temp[1];
+                            break;
+                        }   
+                    }
+                }
+            }
         }
         
         private void runConditionals(){
@@ -266,6 +346,7 @@ public class MainGUI {
             while(true){
                 try {
                     serverSocket = new DatagramSocket(serverPort);
+                    System.out.println("");
                     connected = true;
                     break;
                 } catch (SocketException ex) {
@@ -307,32 +388,83 @@ public class MainGUI {
        }
         
         public void decodeAndUpdate(String input){
-            String in = input.replaceAll("[~%-.0-9]", "");
-            Scanner s = new Scanner(in);
-            int count=-1;
-            while(s.hasNext()){
-                s.next();
-                count++;
-            }
+            //Determine source
+            Scanner s = new Scanner(input);
             
-            //Update the objects based on the data received
-            if(count>obj.length){
-                s = new Scanner(in);
-                obj = new Item[count];
-                for(int i = 0; i < count; i++){
-                    obj[i] = new Item(s.next());
-                    obj[i].updateValues(0, 0, 0, 1.0*10/1000);
+            String source = s.next();
+            
+            boolean isSource = false;
+            for(String str: sources){
+                if(source.equals(str)){
+                    isSource = true;
+                    break;
                 }
             }
             
-            in = input.replaceAll("[~%A-Za-z]", " "); 
-            s = new Scanner(in);
             
-            //Update coordinates
-            for(int i = 0; i < obj.length; i++){
-                if(obj[i].isEnabled())
-                    obj[i].updateValues(s.nextDouble(), s.nextDouble(), s.nextDouble(), 1.0*10/1000);
+            //Round up data from input
+            String fixedInput = input.substring(source.length());
+            String in = fixedInput.replaceAll("[~%-.0-9]", " ");
+            s = new Scanner(in);
+            ArrayList<Object[]> data = new ArrayList<>();
+            while(s.hasNext()){
+                Object[] temp = {s.next(),0.0,0.0,0.0};
+                data.add(temp);
             }
+            data.remove(data.size()-1);
+
+            in = fixedInput.replaceAll("[~%A-Za-z]", " "); 
+            s = new Scanner(in);
+
+            for(int i = 0; i < data.size(); i++){
+                data.get(i)[1] = s.nextDouble();
+                data.get(i)[2] = s.nextDouble();
+                data.get(i)[3] = Double.parseDouble(s.next());
+            }
+            
+            //Check to see if the data is from a new source
+            if(!isSource){
+                sources.add(source);
+                boolean added = false;
+                if(obj[0]!=null){
+                    if(obj[0].getName().equals("n/a")){
+                        added = true;
+                        obj = new Item[data.size()];
+                        for(int d = 0; d < data.size(); d++){
+                            obj[d] = new ViconObject(((String)data.get(d)[0]), source);
+                            obj[d].updateValues(((double)data.get(d)[1]), ((double)data.get(d)[2]), ((double)data.get(d)[3]), 1.0*10/1000);
+                        }
+                    }
+                }
+                if(!added){
+                    Item[] transfer = obj;
+                    obj = new Item[obj.length+data.size()];
+                    int i = 0;
+                    for(; i < obj.length-data.size(); i++){
+                        obj[i] = transfer[i];
+                    }
+                    for(int d = 0; d < data.size(); d++){
+                        obj[d+i] = new ViconObject(((String)data.get(d)[0]), source);
+                        obj[d+i].updateValues(((double)data.get(d)[1]), ((double)data.get(d)[2]), ((double)data.get(d)[3]), 1.0*10/1000);
+                    }
+                }
+            }
+            else{
+                for(int d = 0; d < data.size(); d++){
+                    for(Item i: obj){
+                        if(i!=null){
+                            if(i.getType().equals("VICON") && i.getName().equals(((String)data.get(d)[0])) && i.getSource().equals(source)){
+                                if(i.isEnabled())
+                                    i.updateValues(((double)data.get(d)[1]), ((double)data.get(d)[2]), ((double)data.get(d)[3]), 1.0*10/1000);
+                                data.remove(d);
+                                d--;
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            
             s.close();
         }
         

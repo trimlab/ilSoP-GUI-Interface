@@ -1,6 +1,7 @@
 
 package Resources;
 
+import Resources.Items.Item;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -211,7 +212,8 @@ public class AddConGUI {
         
         public ObjDropDownBox(){
             for(int i = 0; i < obj.length; i++){
-                this.addItem(obj[i].getName());
+                if(obj[i]!=null)
+                    this.addItem(obj[i].getName()/*+" ("+obj[i].getSource()+")"*/);
             }
         }
         

@@ -1,5 +1,5 @@
 
-package Resources;
+package Resources.Items;
 
 import java.awt.Color;
 import java.text.DecimalFormat;
@@ -12,17 +12,17 @@ import java.text.NumberFormat;
  */
 public class Item {
 
-    private String Name;
+    private String name, type, source;
     private double x, y, z;
     private double xVel, yVel, zVel;
     private double xAcc, yAcc, zAcc;
     private double xVelAvg, yVelAvg, zVelAvg;
-    private double[] xVelBuff, yVelBuff, zVelBuff;
+    private final double[] xVelBuff, yVelBuff, zVelBuff;
     private double xAccAvg, yAccAvg, zAccAvg;
-    private double[] xAccBuff, yAccBuff, zAccBuff;
+    private final double[] xAccBuff, yAccBuff, zAccBuff;
     private double cVel, cAcc;
     private double cVelAvg, cAccAvg;
-    private double[] cVelBuff, cAccBuff;
+    private final double[] cVelBuff, cAccBuff;
     private int color = 0;
     private boolean enabled = true;
     
@@ -30,18 +30,21 @@ public class Item {
     private final int bufferSize = 250;
     private int bufferIndex = 0;
     
-    private final Color[] colorWheel ={new Color(45,45,45), new Color(237,28,36), new Color(255,128,0),new Color(240,240,0),
+    private final Color[] colorWheel ={new Color(237,28,36), new Color(255,128,0),new Color(240,240,0),
                                        new Color(0,255,0), new Color(0,255,255),new Color(0,0,255),
                                        new Color(128,0,255), new Color(255,0,255)};
     
-    private final Color[] colorWheelDim ={new Color(35,35,35), new Color(95,7,12), new Color(136,68,0),new Color(155,155,0),
+    private final Color[] colorWheelDim ={new Color(95,7,12), new Color(136,68,0),new Color(155,155,0),
                                           new Color(0,100,0), new Color(0,138,138),new Color(0,0,138),
                                           new Color(69,0,138), new Color(128,0,128)};
 
-    NumberFormat formatter = new DecimalFormat("#0.00");
+    public NumberFormat formatter = new DecimalFormat("#0.00");
     
-    public Item(String name){
-        this.Name = name;
+    public Item(String name, String source, String type){
+        this.name = name;
+        this.source = source;
+        this.type = type;
+        
         //Build buffers
         xVelBuff = new double[bufferSize];
         yVelBuff = new double[bufferSize];
@@ -61,6 +64,8 @@ public class Item {
             zAccBuff[b] = 0.0;
             cAccBuff[b] = 0.0;
         }
+        
+        color = (int)(Math.random()*colorWheel.length);
     }
     
     public boolean isEnabled() {
@@ -73,10 +78,10 @@ public class Item {
         return colorWheel;
     }   
     public String getName() {
-        return Name;
+        return name;
     }
     public void setName(String Name) {
-        this.Name = Name;
+        this.name = Name;
     }
     public double getX() {
         return Double.parseDouble(formatter.format(x));
@@ -208,7 +213,21 @@ public class Item {
     }
     public void setColor(int i) {
         this.color = i;
-    } 
+    }
+    public String getType() {
+        return type;
+    }
+    public void setType(String type) {
+        this.type = type;
+    }
+    public String getSource() {
+        return source;
+    }
+    public void setSource(String source) {
+        this.source = source;
+    }
+    
+    
     public void updateValues(double x, double y, double z, double time){
         int previousIndex = bufferIndex -1;
         if(bufferIndex == 0)

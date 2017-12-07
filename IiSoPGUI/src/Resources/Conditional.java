@@ -1,6 +1,7 @@
 
 package Resources;
 
+import Resources.Items.Item;
 import MusicThreads.MusicThread;
 import java.io.BufferedWriter;
 import java.io.File;

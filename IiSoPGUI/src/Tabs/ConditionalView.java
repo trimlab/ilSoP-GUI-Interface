@@ -10,7 +10,7 @@ import Resources.Conditional;
 import Resources.Buttons.ConDeleteIfButton;
 import Resources.Buttons.ConDeleteThenButton;
 import Resources.Buttons.ConUseButton;
-import Resources.Item;
+import Resources.Items.Item;
 import Resources.PatternInfo;
 import Resources.Section;
 import java.awt.BasicStroke;

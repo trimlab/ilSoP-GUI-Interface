@@ -2,7 +2,7 @@ package Resources.Buttons;
 
 import Resources.AddConGUI;
 import Resources.Conditional;
-import Resources.Item;
+import Resources.Items.Item;
 import Resources.Section;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
